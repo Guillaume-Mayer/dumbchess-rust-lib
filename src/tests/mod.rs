@@ -1,6 +1,6 @@
 #[test]
 fn board_to_str() {
-    let b = super::board::Board::new();
+    let b = super::Board::new();
     assert_eq!(
         "rnbqkbnr\n\
         pppppppp\n\
