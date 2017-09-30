@@ -1,6 +1,6 @@
 use color::Color;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum PieceType {
     King,
     Queen,
@@ -10,7 +10,7 @@ pub enum PieceType {
     Pawn,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Piece {
     color: Color,
     piece: PieceType,

@@ -3,7 +3,7 @@ use piece::{Piece, PieceType};
 use color::Color;
 
 pub struct Board {
-    tiles: [Tile; 120]
+    tiles: [Tile; 120],
 }
 
 impl Board {
@@ -39,23 +39,16 @@ impl Board {
             ]
         }
     }
-
-    fn to_str(&self) -> String {
-        let mut s = String::new();
-        for row in (2..10).rev() {
-            for col in 1..9 {
-                s.push(self.tiles[row * 10 + col].to_char());
-            }
-            s.push('\n');
-        }
-        s
-    }
 }
 
 use std::fmt;
 
-impl fmt::Display for Board {
+impl fmt::Debug for Board {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.to_str())
+        let mut s = String::new();
+        for t in self.tiles.iter() {
+            s.push(t.to_char());
+        };
+        write!(f, "{}", s)
     }
 }
