@@ -30,6 +30,8 @@ impl Position {
             "e4" => Mov::TwoPush(12, 28),
             "c5" => Mov::TwoPush(50, 34),
             "Nf3" => Mov::Quiet(6, 21),
+            "O-O" => Mov::CastleKing,
+            "O-O-O" => Mov::CastleQueen,
             _ => unimplemented!()
         }
     }

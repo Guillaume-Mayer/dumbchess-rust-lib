@@ -11,7 +11,7 @@ pub enum Mov {
     PromotionCapture(usize, usize, PieceType),
 }
 
-impl Mov {
+/*impl Mov {
     pub fn is_capture(&self) -> bool {
         match *self {
             Mov::Capture(_,_) => true,
@@ -27,4 +27,4 @@ impl Mov {
             _ => false,
         }
     }
-}
+}*/

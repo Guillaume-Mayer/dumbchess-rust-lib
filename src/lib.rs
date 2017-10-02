@@ -3,13 +3,13 @@ mod piece;
 mod tile;
 mod board;
 mod position;
+mod mov;
 
 trait Play {
     fn play(&self, m: &mov::Mov) -> Self;
 }
 
-mod mov;
-mod game;
+pub mod game;
 
 #[cfg(test)]
 mod tests;
