@@ -17,13 +17,15 @@ pub struct Piece {
 }
 
 impl Piece {
+
     pub fn new(color: Color, piece: PieceType) -> Piece {
         Piece {
             color,
             piece,
         }
     }
-    pub fn to_char(&self) -> char {
+
+    pub fn to_fen(&self) -> char {
         use self::PieceType::*;
         match self.color {
             Color::White => match self.piece {
@@ -43,5 +45,9 @@ impl Piece {
                 Pawn => 'p',
             },
         }
+    }
+
+    pub fn get_color(&self) -> Color {
+        self.color
     }
 }

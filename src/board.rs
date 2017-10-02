@@ -1,12 +1,17 @@
+use std::char;
+
 use tile::Tile;
 use piece::{Piece, PieceType};
 use color::Color;
+use mov::Mov;
+use super::Play;
 
 pub struct Board {
     tiles: [Tile; 64],
 }
 
 impl Board {
+
     pub fn new() -> Board {
         let ee = Tile::Empty;
         let wr = Tile::Occupied(Piece::new(Color::White, PieceType::Rook));
@@ -34,6 +39,30 @@ impl Board {
             ]
         }
     }
+
+    pub fn to_fen(&self) -> String {
+        let mut fen = String::new();
+        for rank in (0..8).rev() {
+            let mut empty = 0;
+            for file in 0..8 {
+                match self.tiles[rank*8 + file] {
+                    Tile::Empty => empty += 1,
+                    Tile::Occupied(p) => {
+                        if empty > 0 {
+                            fen.push(char::from_digit(empty, 10).unwrap());
+                            empty = 0;
+                        }
+                        fen.push(p.to_fen());
+                        },
+                }
+            }
+            if empty > 0 {
+                fen.push(char::from_digit(empty, 10).unwrap());
+            }
+            if rank > 0 { fen.push('/'); }
+        }
+        fen
+    }
 }
 
 impl Clone for Board {
@@ -43,5 +72,37 @@ impl Clone for Board {
             tiles[i] = self.tiles[i];
         }
         Board {tiles}
+    }
+}
+
+impl Play for Board {
+    fn play(&self, m: &Mov) -> Board {
+        let mut board: Board = self.clone();
+        match *m {
+            Mov::Quiet(t1, t2) | Mov::TwoPush(t1, t2) | Mov::Capture(t1, t2) => {
+                board.tiles[t2] = board.tiles[t1];
+                board.tiles[t1] = Tile::Empty;
+            },
+            Mov::EnPassant(t1, t2) => {
+                board.tiles[t2] = board.tiles[t1];
+                board.tiles[t1] = Tile::Empty;
+                if t2 > t1 {
+                    board.tiles[t2 - 8] = Tile::Empty;
+                } else {
+                    board.tiles[t2 + 8] = Tile::Empty;
+                }
+            },
+            Mov::CastleKing => println!("O-O"),
+            Mov::CastleQueen => println!("O-O-O"),
+            Mov::Promotion(t1, t2, p) | Mov::PromotionCapture(t1, t2, p) => {
+                let color = match board.tiles[t1] {
+                    Tile::Empty => panic!("Empty tile"),
+                    Tile::Occupied(p) => p.get_color(),
+                };
+                board.tiles[t2] = Tile::Occupied(Piece::new(color, p));
+                board.tiles[t1] = Tile::Empty;
+            },
+        }
+        board
     }
 }

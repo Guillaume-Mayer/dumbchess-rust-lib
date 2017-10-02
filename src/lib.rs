@@ -3,8 +3,13 @@ mod piece;
 mod tile;
 mod board;
 mod position;
-pub mod mov;
-pub mod game;
+
+trait Play {
+    fn play(&self, m: &mov::Mov) -> Self;
+}
+
+mod mov;
+mod game;
 
 #[cfg(test)]
 mod tests;
