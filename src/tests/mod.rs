@@ -11,5 +11,5 @@ fn board_to_str() {
          ........\n\
          ........\n\
          PPPPPPPP\n\
-         RNBQKBNR\n", format!("{}", b));
+         RNBQKBNR\n", format!("{:?}", b));
 }

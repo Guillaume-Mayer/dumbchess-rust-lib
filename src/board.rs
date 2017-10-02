@@ -3,12 +3,11 @@ use piece::{Piece, PieceType};
 use color::Color;
 
 pub struct Board {
-    tiles: [Tile; 120],
+    tiles: [Tile; 64],
 }
 
 impl Board {
     pub fn new() -> Board {
-        let oo = Tile::Out;
         let ee = Tile::Empty;
         let wr = Tile::Occupied(Piece::new(Color::White, PieceType::Rook));
         let wn = Tile::Occupied(Piece::new(Color::White, PieceType::Knight));
@@ -24,18 +23,14 @@ impl Board {
         let bp = Tile::Occupied(Piece::new(Color::Black, PieceType::Pawn));
         Board {
             tiles: [
-                oo, oo, oo, oo, oo, oo, oo, oo, oo, oo,
-                oo, oo, oo, oo, oo, oo, oo, oo, oo, oo,
-                oo, wr, wn, wb, wq, wk, wb, wn, wr, oo,
-                oo, wp, wp, wp, wp, wp, wp, wp, wp, oo,
-                oo, ee, ee, ee, ee, ee, ee, ee, ee, oo,
-                oo, ee, ee, ee, ee, ee, ee, ee, ee, oo,
-                oo, ee, ee, ee, ee, ee, ee, ee, ee, oo,
-                oo, ee, ee, ee, ee, ee, ee, ee, ee, oo,
-                oo, bp, bp, bp, bp, bp, bp, bp, bp, oo,
-                oo, br, bn, bb, bq, bk, bb, bn, br, oo,
-                oo, oo, oo, oo, oo, oo, oo, oo, oo, oo,
-                oo, oo, oo, oo, oo, oo, oo, oo, oo, oo,
+                wr, wn, wb, wq, wk, wb, wn, wr,
+                wp, wp, wp, wp, wp, wp, wp, wp,
+                ee, ee, ee, ee, ee, ee, ee, ee,
+                ee, ee, ee, ee, ee, ee, ee, ee,
+                ee, ee, ee, ee, ee, ee, ee, ee,
+                ee, ee, ee, ee, ee, ee, ee, ee,
+                bp, bp, bp, bp, bp, bp, bp, bp,
+                br, bn, bb, bq, bk, bb, bn, br,
             ]
         }
     }
