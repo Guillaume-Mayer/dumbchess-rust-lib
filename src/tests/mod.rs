@@ -1,15 +1,7 @@
-use super::board::Board;
+use super::position::Position;
 
 #[test]
-fn board_to_str() {
-    let b = Board::new();
-    assert_eq!(
-        "rnbqkbnr\n\
-         pppppppp\n\
-         ........\n\
-         ........\n\
-         ........\n\
-         ........\n\
-         PPPPPPPP\n\
-         RNBQKBNR\n", format!("{:?}", b));
+fn pos_to_fen() {
+    let p = Position::new();
+    assert_eq!("", p.to_fen());
 }

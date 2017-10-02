@@ -3,7 +3,7 @@ mod piece;
 mod tile;
 mod board;
 mod position;
-mod mov;
+pub mod mov;
 pub mod game;
 
 #[cfg(test)]

@@ -10,7 +10,7 @@ pub enum PieceType {
     Pawn,
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone)]
 pub struct Piece {
     color: Color,
     piece: PieceType,
@@ -22,7 +22,7 @@ impl Piece {
             color,
             piece,
         }
-    } 
+    }
     pub fn to_char(&self) -> char {
         use self::PieceType::*;
         match self.color {
@@ -41,7 +41,7 @@ impl Piece {
                 Bishop => 'b',
                 Knight => 'n',
                 Pawn => 'p',
-            }, 
+            },
         }
     }
 }

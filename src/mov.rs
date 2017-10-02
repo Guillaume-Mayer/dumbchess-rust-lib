@@ -1,7 +1,5 @@
 use piece::PieceType;
 
-#[allow(dead_code)]
-#[derive(Debug)]
 pub enum Mov {
     Quiet(u8, u8),
     Capture(u8, u8, PieceType),
@@ -12,26 +10,28 @@ pub enum Mov {
     PromotionCapture(u8, u8, PieceType, PieceType),
 }
 
-trait Play {
+pub trait Play {
     fn play(&self, m: Mov) -> Self;
-    fn play_from_str(&self, s: String) -> Self;
     fn play_mut(&mut self, m: Mov);
-    fn play_mut_from_str(&mut self, s:String);
 }
 
 use board::Board;
 
 impl Play for Board {
     fn play(&self, m: Mov) -> Board {
-        Board::new()
-    }
-    fn play_from_str(&self, s: String) -> Board {
-        Board::new()
+        let mut board: Board = self.clone();
+        match m {
+            Mov::Quiet(t1, t2) => println!("Quiet move {}, {}", t1, t2),
+            Mov::Capture(t1, t2, p) => println!("Capture {}, {}, {:?}", t1, t2, p),
+            Mov::EnPassant(t1, t2, p) => println!("En passant {}, {}, {:?}", t1, t2, p),
+            Mov::CastleKing => println!("O-O"),
+            Mov::CastleQueen => println!("O-O-O"),
+            Mov::Promotion(t1, t2, p) => println!("Promotion {}, {}, {:?}", t1, t2, p),
+            Mov::PromotionCapture(t1, t2, p1, p2) => println!("Promotion Capture {}, {}, {:?}, {:?}", t1, t2, p1, p2),
+        }
+        board
     }
     fn play_mut(&mut self, m: Mov) {
-        unimplemented!();
-    }
-    fn play_mut_from_str(&mut self, s: String) {
         unimplemented!();
     }
 }

@@ -36,14 +36,12 @@ impl Board {
     }
 }
 
-use std::fmt;
-
-impl fmt::Debug for Board {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut s = String::new();
-        for t in self.tiles.iter() {
-            s.push(t.to_char());
-        };
-        write!(f, "{}", s)
+impl Clone for Board {
+    fn clone(&self) -> Board {
+        let mut tiles: [Tile; 64] = [Tile::Empty; 64];
+        for i in 0..64 {
+            tiles[i] = self.tiles[i];
+        }
+        Board {tiles}
     }
 }
