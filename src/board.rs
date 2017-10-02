@@ -92,8 +92,18 @@ impl Play for Board {
                     board.tiles[t2 + 8] = Tile::Empty;
                 }
             },
-            Mov::CastleKing => println!("O-O"),
-            Mov::CastleQueen => println!("O-O-O"),
+            Mov::CastleKing(t1) => {
+                board.tiles[t1 + 2] = board.tiles[t1];
+                board.tiles[t1] = Tile::Empty;
+                board.tiles[t1 - 1] = board.tiles[t1 + 3];
+                board.tiles[t1 + 3] = Tile::Empty;
+            },
+            Mov::CastleQueen(t1) => {
+                board.tiles[t1 - 2] = board.tiles[t1];
+                board.tiles[t1] = Tile::Empty;
+                board.tiles[t1 + 1] = board.tiles[t1 - 4];
+                board.tiles[t1 - 4] = Tile::Empty;
+            },
             Mov::Promotion(t1, t2, p) | Mov::PromotionCapture(t1, t2, p) => {
                 let color = match board.tiles[t1] {
                     Tile::Empty => panic!("Empty tile"),

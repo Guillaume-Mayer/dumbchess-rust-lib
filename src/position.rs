@@ -25,13 +25,19 @@ impl Position {
         format!("{} {} {} {} {}", self.board.to_fen(), self.color_to_play.to_fen(), "KQkq", self.en_passant_to_fen(), self.half_move_clock)
     }
 
-    pub fn move_from_str(s: &'static str) -> Mov {
+    pub fn move_from_str(&self, s: &'static str) -> Mov {
         match s {
             "e4" => Mov::TwoPush(12, 28),
             "c5" => Mov::TwoPush(50, 34),
             "Nf3" => Mov::Quiet(6, 21),
-            "O-O" => Mov::CastleKing,
-            "O-O-O" => Mov::CastleQueen,
+            "O-O" => Mov::CastleKing(match self.color_to_play {
+                Color::White => 4,
+                Color::Black => 60,
+            }),
+            "O-O-O" => Mov::CastleQueen(match self.color_to_play {
+                Color::White => 4,
+                Color::Black => 60,
+            }),
             _ => unimplemented!()
         }
     }
@@ -51,9 +57,7 @@ impl Position {
 impl Play for Position {
     fn play(&self, m: &Mov) -> Position {
         let half_move_clock = match *m {
-            Mov::Quiet(_,_) => self.half_move_clock + 1,
-            Mov::CastleKing => self.half_move_clock + 1,
-            Mov::CastleQueen => self.half_move_clock + 1,
+            Mov::Quiet(_,_) | Mov::CastleKing(_) | Mov::CastleQueen(_) => self.half_move_clock + 1,
             _ => 0,
         };
         let en_passant = match *m {
