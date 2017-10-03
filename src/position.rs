@@ -26,14 +26,41 @@ impl Position {
         format!("{} {} {} {} {}", self.board.to_fen(), self.color_to_play.to_fen(), "KQkq", self.en_passant_to_fen(), self.half_move_clock)
     }
 
-    pub fn move_from_str(&self, s: &str) -> Mov {
-        match s {
+    pub fn move_from_str(&self, s: &str) -> Result<Mov, &'static str> {
+        /*match s {
             "O-O" => Mov::CastleKing,
             "O-O-O" => Mov::CastleQueen,
             "e4" => Mov::TwoPush(28),
             "c5" => Mov::TwoPush(34),
             "Nf3" => Mov::Quiet(6, 21),
             _ => unimplemented!(),
+        }*/
+        let mut ch = s.chars();
+        match ch.next() {
+            None => Err("Empty string"),
+            Some(c) => {
+                match c {
+                    'O' => Ok(Mov::CastleKing),
+                    'a'...'h' => {
+                        let file = c;
+                        match ch.next() {
+                            None => Err("Invalid move"),
+                            Some(c) => {
+                                match c {
+                                    '1'...'8' => {
+                                        let rank = c;
+                                        println!("file: {}, rank: {}", file, rank);
+                                        if file == 'e' {Ok(Mov::TwoPush(28))} else {Ok(Mov::TwoPush(34))}
+                                    },
+                                    _ => unimplemented!(),
+                                }
+                            },
+                        }
+                    },
+                    'K' | 'Q' | 'R' | 'B' | 'N' => Ok(Mov::Quiet(6, 21)),
+                    _ => Err("Invalid move"),
+                }
+            }
         }
     }
 

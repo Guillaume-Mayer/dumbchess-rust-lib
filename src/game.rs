@@ -16,8 +16,10 @@ impl Game {
     }
 
     pub fn play(&mut self, s: &str) {
-        let m = self.position.move_from_str(s);
-        self.play_move(m);
+        match self.position.move_from_str(s) {
+            Err(e) => println!("ERROR: {}", e),
+            Ok(m) => self.play_move(m),
+        }
     }
 
     fn play_move(&mut self, m: Mov) {
@@ -42,7 +44,7 @@ impl Game {
                         s.push_str(&format!("{}.", i / 2 + 1));
                     }
                     s.push_str(&p.move_to_san(&m));
-                    s.push(' ');                 
+                    s.push(' ');
                     i += 1;
                     p = p.play(&m);
                 },
