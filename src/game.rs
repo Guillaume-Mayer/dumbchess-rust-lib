@@ -15,7 +15,7 @@ impl Game {
         }
     }
 
-    pub fn play(&mut self, s: &'static str) {
+    pub fn play(&mut self, s: &str) {
         let m = self.position.move_from_str(s);
         self.play_move(m);
     }

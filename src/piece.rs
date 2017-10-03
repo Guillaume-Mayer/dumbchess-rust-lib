@@ -10,6 +10,19 @@ pub enum PieceType {
     Pawn,
 }
 
+impl PieceType {
+    pub fn to_fen(&self) -> char {
+        match *self {
+            PieceType::King => 'K',
+            PieceType::Queen => 'Q',
+            PieceType::Rook => 'R',
+            PieceType::Bishop => 'B',
+            PieceType::Knight => 'N',
+            PieceType::Pawn => 'P',            
+        }
+    }  
+}
+
 #[derive(Copy, Clone)]
 pub struct Piece {
     color: Color,
@@ -26,28 +39,16 @@ impl Piece {
     }
 
     pub fn to_fen(&self) -> char {
-        use self::PieceType::*;
         match self.color {
-            Color::White => match self.piece {
-                King => 'K',
-                Queen => 'Q',
-                Rook => 'R',
-                Bishop => 'B',
-                Knight => 'N',
-                Pawn => 'P',
-            },
+            Color::White => self.piece.to_fen(),
             Color::Black => match self.piece {
-                King => 'k',
-                Queen => 'q',
-                Rook => 'r',
-                Bishop => 'b',
-                Knight => 'n',
-                Pawn => 'p',
+                PieceType::King => 'k',
+                PieceType::Queen => 'q',
+                PieceType::Rook => 'r',
+                PieceType::Bishop => 'b',
+                PieceType::Knight => 'n',
+                PieceType::Pawn => 'p',            
             },
         }
-    }
-
-    pub fn get_color(&self) -> Color {
-        self.color
     }
 }

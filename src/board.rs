@@ -3,7 +3,6 @@ use std::char;
 use tile::Tile;
 use piece::{Piece, PieceType};
 use color::Color;
-use mov::Mov;
 
 pub struct Board {
     tiles: [Tile; 64],
@@ -63,48 +62,22 @@ impl Board {
         fen
     }
 
-    pub fn tile_at(&self, index: usize) -> Tile {
-        self.tiles[index]
+    pub fn tile_at(&self, i: usize) -> Tile {
+        self.tiles[i]
     }
 
-    pub fn play(&self, m: &Mov) -> Board {
-        let mut board: Board = self.clone();
-        match *m {
-            Mov::Quiet(t1, t2) | Mov::TwoPush(t1, t2) | Mov::Capture(t1, t2) => {
-                board.tiles[t2] = board.tiles[t1];
-                board.tiles[t1] = Tile::Empty;
-            },
-            Mov::EnPassant(t1, t2) => {
-                board.tiles[t2] = board.tiles[t1];
-                board.tiles[t1] = Tile::Empty;
-                if t2 > t1 {
-                    board.tiles[t2 - 8] = Tile::Empty;
-                } else {
-                    board.tiles[t2 + 8] = Tile::Empty;
-                }
-            },
-            Mov::CastleKing(t1) => {
-                board.tiles[t1 + 2] = board.tiles[t1];
-                board.tiles[t1] = Tile::Empty;
-                board.tiles[t1 - 1] = board.tiles[t1 + 3];
-                board.tiles[t1 + 3] = Tile::Empty;
-            },
-            Mov::CastleQueen(t1) => {
-                board.tiles[t1 - 2] = board.tiles[t1];
-                board.tiles[t1] = Tile::Empty;
-                board.tiles[t1 + 1] = board.tiles[t1 - 4];
-                board.tiles[t1 - 4] = Tile::Empty;
-            },
-            Mov::Promotion(t1, t2, p) | Mov::PromotionCapture(t1, t2, p) => {
-                let color = match board.tiles[t1] {
-                    Tile::Empty => panic!("Empty tile"),
-                    Tile::Occupied(p) => p.get_color(),
-                };
-                board.tiles[t2] = Tile::Occupied(Piece::new(color, p));
-                board.tiles[t1] = Tile::Empty;
-            },
-        }
-        board
+    pub fn mov(&mut self, i1: usize, i2: usize) {
+        self.tiles[i2] = self.tiles[i1];
+        self.tiles[i1] = Tile::Empty;
+    }
+
+    pub fn prom(&mut self, i1: usize, i2: usize, p: Piece) {
+        self.tiles[i2] = Tile::Occupied(p);
+        self.tiles[i1] = Tile::Empty;
+    }
+
+    pub fn empty(&mut self, i: usize) {
+        self.tiles[i] = Tile::Empty;
     }
 }
 
