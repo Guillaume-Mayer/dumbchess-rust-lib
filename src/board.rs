@@ -4,7 +4,6 @@ use tile::Tile;
 use piece::{Piece, PieceType};
 use color::Color;
 use mov::Mov;
-use super::Play;
 
 pub struct Board {
     tiles: [Tile; 64],
@@ -63,20 +62,12 @@ impl Board {
         }
         fen
     }
-}
 
-impl Clone for Board {
-    fn clone(&self) -> Board {
-        let mut tiles: [Tile; 64] = [Tile::Empty; 64];
-        for i in 0..64 {
-            tiles[i] = self.tiles[i];
-        }
-        Board {tiles}
+    pub fn tile_at(&self, index: usize) -> Tile {
+        self.tiles[index]
     }
-}
 
-impl Play for Board {
-    fn play(&self, m: &Mov) -> Board {
+    pub fn play(&self, m: &Mov) -> Board {
         let mut board: Board = self.clone();
         match *m {
             Mov::Quiet(t1, t2) | Mov::TwoPush(t1, t2) | Mov::Capture(t1, t2) => {
@@ -114,5 +105,15 @@ impl Play for Board {
             },
         }
         board
+    }
+}
+
+impl Clone for Board {
+    fn clone(&self) -> Board {
+        let mut tiles: [Tile; 64] = [Tile::Empty; 64];
+        for i in 0..64 {
+            tiles[i] = self.tiles[i];
+        }
+        Board {tiles}
     }
 }

@@ -1,7 +1,7 @@
 use board::Board;
 use color::Color;
 use mov::Mov;
-use super::Play;
+use tile::Tile;
 
 pub struct Position {
     board: Board,
@@ -52,10 +52,8 @@ impl Position {
     fn index_to_str(index: usize) -> String {
         format!("{}{}", "abcdefgh".chars().nth(index % 8).unwrap(), index / 8 + 1)
     }
-}
 
-impl Play for Position {
-    fn play(&self, m: &Mov) -> Position {
+    pub fn play(&self, m: &Mov) -> Position {
         let half_move_clock = match *m {
             Mov::Quiet(_,_) | Mov::CastleKing(_) | Mov::CastleQueen(_) => self.half_move_clock + 1,
             _ => 0,
@@ -72,6 +70,21 @@ impl Play for Position {
             color_to_play: self.color_to_play.swap(),
             half_move_clock,
             en_passant
+        }
+    }
+
+    pub fn move_to_san(&self, m: &Mov) -> String {
+        match *m {
+            Mov::TwoPush(t1, t2) => format!("{}", Self::index_to_str(t2)),
+            Mov::CastleKing(_) => String::from("O-O"),
+            Mov::CastleQueen(_) => String::from("O-O-O"),
+            Mov::Quiet(t1, t2) => {
+                match self.board.tile_at(t1) {
+                    Tile::Empty => panic!("Empty tile"),
+                    Tile::Occupied(p) => format!("{}{}", p.to_fen(), Self::index_to_str(t2)),
+                }
+            },
+            _ => unimplemented!(),
         }
     }
 }

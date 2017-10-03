@@ -29,3 +29,12 @@ fn play_e4_c5_nf3_fen() {
     g.play("Nf3");
     assert_eq!("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2", g.to_fen());
 }
+
+#[test]
+fn play_e4_c5_nf3_pgn() {
+    let mut g = Game::new();
+    g.play("e4");
+    g.play("c5");
+    g.play("Nf3");
+    assert_eq!("1.e4 c5 2.Nf3 ", g.to_pgn());
+}

@@ -1,6 +1,5 @@
 use mov::Mov;
 use position::Position;
-use super::Play;
 
 pub struct Game {
     history: Vec<Mov>,
@@ -30,4 +29,25 @@ impl Game {
         format!("{} {}", self.position.to_fen(), self.history.len() / 2 + 1)
     }
 
+    pub fn to_pgn(&self) -> String {
+        let mut p = Position::new();
+        let mut s = String::new();
+        let mut i = 0;
+        loop {
+            let m = self.history.get(i);
+            match m {
+                None => break,
+                Some(m) => {
+                    if i % 2 == 0 {
+                        s.push_str(&format!("{}.", i / 2 + 1));
+                    }
+                    s.push_str(&p.move_to_san(&m));
+                    s.push(' ');                 
+                    i += 1;
+                    p = p.play(&m);
+                },
+            };
+        }
+        s
+    }
 }
