@@ -52,4 +52,8 @@ impl Game {
         }
         s
     }
+
+    pub fn to_str(&self) -> String {
+        self.position.to_str()
+    }
 }

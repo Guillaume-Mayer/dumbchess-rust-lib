@@ -26,6 +26,10 @@ impl Position {
         format!("{} {} {} {} {}", self.board.to_fen(), self.color_to_play.to_fen(), "KQkq", self.en_passant_to_fen(), self.half_move_clock)
     }
 
+    pub fn to_str(&self) -> String {
+        self.board.to_str()
+    }
+
     pub fn move_from_str(&self, s: &str) -> Result<Mov, Error> {
         let m: ParsedMov = s.parse()?;
         match m {

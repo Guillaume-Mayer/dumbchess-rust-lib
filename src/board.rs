@@ -62,6 +62,18 @@ impl Board {
         fen
     }
 
+    pub fn to_str(&self) -> String {
+        let mut s = String::new();
+        for rank in (0..8).rev() {
+            for file in 0..8 {
+                s.push(self.tiles[rank * 8 + file].to_char());
+                if file < 7 { s.push(' ') };
+            }
+            if rank > 0 { s.push('\n'); }
+        }
+        s
+    }
+
     pub fn tile_at(&self, i: usize) -> Tile {
         self.tiles[i]
     }

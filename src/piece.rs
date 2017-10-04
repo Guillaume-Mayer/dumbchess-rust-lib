@@ -18,9 +18,9 @@ impl PieceType {
             PieceType::Rook => 'R',
             PieceType::Bishop => 'B',
             PieceType::Knight => 'N',
-            PieceType::Pawn => 'P',            
+            PieceType::Pawn => 'P',
         }
-    }  
+    }
 }
 
 #[derive(Copy, Clone)]
@@ -47,7 +47,28 @@ impl Piece {
                 PieceType::Rook => 'r',
                 PieceType::Bishop => 'b',
                 PieceType::Knight => 'n',
-                PieceType::Pawn => 'p',            
+                PieceType::Pawn => 'p',
+            },
+        }
+    }
+
+    pub fn to_char(&self) -> char {
+        match self.color {
+            Color::White => match self.piece {
+                PieceType::King => '♔',
+                PieceType::Queen => '♕',
+                PieceType::Rook => '♖',
+                PieceType::Bishop => '♗',
+                PieceType::Knight => '♘',
+                PieceType::Pawn => '♙',
+            },
+            Color::Black => match self.piece {
+                PieceType::King => '♚',
+                PieceType::Queen => '♛',
+                PieceType::Rook => '♜',
+                PieceType::Bishop => '♝',
+                PieceType::Knight => '♞',
+                PieceType::Pawn => '♟',
             },
         }
     }
