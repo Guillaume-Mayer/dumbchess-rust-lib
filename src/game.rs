@@ -1,7 +1,41 @@
 use mov::Mov;
 use position::Position;
 
+struct Info {
+    event: String,
+    site: String,
+    date: String,
+    round: String,
+    white: String,
+    black: String,
+    result: String,
+}
+
+impl Info {
+    fn new() -> Info {
+        Info {
+            event: String::from("?"),
+            site: String::from("?"),
+            date: String::from("????.??.??"),
+            round: String::from("?"),
+            white: String::from("You"),
+            black: String::from("Me"),
+            result: String::from("*"),
+        }
+    }
+    fn to_str(&self) -> String {
+        format!("[Event \"{}\"]\n\
+                 [Site \"{}\"]\n\
+                 [Date \"{}\"]\n\
+                 [Round \"{}\"]\n\
+                 [White \"{}\"]\n\
+                 [Black \"{}\"]\n\
+                 [Result \"{}\"]\n", self.event, self.site, self.date, self.round, self.white, self.black, self.result)
+    }
+}
+
 pub struct Game {
+    info: Info,
     history: Vec<Mov>,
     position: Position,
 }
@@ -10,6 +44,7 @@ impl Game {
 
     pub fn new() -> Game {
         Game {
+            info: Info::new(),
             history: Vec::new(),
             position: Position::new(),
         }
@@ -32,8 +67,9 @@ impl Game {
     }
 
     pub fn to_pgn(&self) -> String {
+        let mut s = self.info.to_str();
+        s.push('\n');
         let mut p = Position::new();
-        let mut s = String::new();
         let mut i = 0;
         loop {
             let m = self.history.get(i);
