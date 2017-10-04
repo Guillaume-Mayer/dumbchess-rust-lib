@@ -66,6 +66,13 @@ fn parse_move_Nf3() {
 }
 
 #[test]
+#[allow(non_snake_case)]
+fn parse_move_Nxf3() {
+    let m = "Nxf3".parse::<ParsedMov>();
+    assert!(m.is_ok());
+}
+
+#[test]
 fn parse_move_castle() {
     match "O-O-O".parse().unwrap() {
         ParsedMov::CastleQueen => assert!(true),

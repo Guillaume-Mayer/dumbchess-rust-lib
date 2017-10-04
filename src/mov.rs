@@ -59,7 +59,7 @@ fn parse_move(p: PieceType, f: Option<char>, mut rem: Chars) -> Result<ParsedMov
     match f {
         None => Err(Error::InvalidMove),
         Some(f) => match f {
-            'a'...'f' => {
+            'a'...'h' => {
                 let file = parse_file(f);
                 let rank = parse_rank(rem.next().unwrap()).unwrap() as usize;
                 Ok(ParsedMov::Quiet(p, rank * 8 + file))
