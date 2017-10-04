@@ -18,12 +18,18 @@ pub enum ParsedMov {
     CastleKing,
     CastleQueen,
     Quiet(PieceType, usize),
+    QuietWithFile(PieceType, usize, usize),
+    QuietWithRank(PieceType, usize, usize),
+    Capture(PieceType, usize),
+    CaptureWithFile(PieceType, usize, usize),
+    CaptureWithRank(PieceType, usize, usize),
 }
 
 #[derive(Debug)]
 pub enum Error {
     EmptyStr,
     InvalidMove,
+    Unimplemented,
 }
 
 impl FromStr for ParsedMov {

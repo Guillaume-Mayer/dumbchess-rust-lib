@@ -40,6 +40,7 @@ impl Position {
                 PieceType::Knight => Ok(Mov::Quiet(6, i2)),
                 _ => Err(Error::InvalidMove)
             },
+            _ => Err(Error::Unimplemented)
         }
     }
 

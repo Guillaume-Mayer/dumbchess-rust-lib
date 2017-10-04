@@ -1,5 +1,22 @@
 use mov::Mov;
 use position::Position;
+use std::fmt;
+
+enum Result {
+    Draw,
+    WhiteWins,
+    BlackWins,
+}
+
+impl fmt::Display for Result {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            Result::Draw => write!(f, "1/2-1/2"),
+            Result::WhiteWins => write!(f, "1-0"),
+            Result::BlackWins => write!(f, "0-1"),
+        }
+    }
+}
 
 struct Info {
     event: String,
@@ -8,7 +25,7 @@ struct Info {
     round: String,
     white: String,
     black: String,
-    result: String,
+    result: Option<Result>,
 }
 
 impl Info {
@@ -20,17 +37,21 @@ impl Info {
             round: String::from("?"),
             white: String::from("You"),
             black: String::from("Me"),
-            result: String::from("*"),
+            result: None,
         }
     }
     fn to_str(&self) -> String {
+        let result = match self.result {
+            None => String::from("*"),
+            Some(ref r) => format!("{}", r),
+        };
         format!("[Event \"{}\"]\n\
                  [Site \"{}\"]\n\
                  [Date \"{}\"]\n\
                  [Round \"{}\"]\n\
                  [White \"{}\"]\n\
                  [Black \"{}\"]\n\
-                 [Result \"{}\"]\n", self.event, self.site, self.date, self.round, self.white, self.black, self.result)
+                 [Result \"{}\"]\n", self.event, self.site, self.date, self.round, self.white, self.black, result)
     }
 }
 
