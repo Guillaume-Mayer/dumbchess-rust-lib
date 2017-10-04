@@ -1,5 +1,5 @@
 use super::game::Game;
-use super::mov::Mov;
+use super::mov::ParsedMov;
 
 #[test]
 fn init_fen() {
@@ -42,30 +42,30 @@ fn play_e4_c5_nf3_pgn() {
 
 #[test]
 fn parse_move_zz() {
-    let m = "zz".parse::<Mov>();
+    let m = "zz".parse::<ParsedMov>();
     assert!(m.is_err());
 }
 
 #[test]
 #[should_panic(expected = "InvalidMove")]
 fn parse_move_panic() {
-    let m: Mov = "zz".parse().unwrap();
+    let m: ParsedMov = "zz".parse().unwrap();
 }
 
 #[test]
 fn parse_move_e4() {
-    let m = "e4".parse::<Mov>();
+    let m = "e4".parse::<ParsedMov>();
     assert!(m.is_ok());
 }
 
 #[test]
 fn parse_move_castle() {
     match "O-O-O".parse().unwrap() {
-        Mov::CastleQueen => assert!(true),
+        ParsedMov::CastleQueen => assert!(true),
         _ => assert!(false, "Castle queen"),
     };
     match "O-O".parse().unwrap() {
-        Mov::CastleKing => assert!(true),
+        ParsedMov::CastleKing => assert!(true),
         _ => assert!(false, "Castle king"),
     };
 }

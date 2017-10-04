@@ -14,17 +14,24 @@ pub enum Mov {
 }
 
 #[derive(Debug)]
+pub enum ParsedMov {
+    CastleKing,
+    CastleQueen,
+    Quiet(PieceType, usize),
+}
+
+#[derive(Debug)]
 pub enum Error {
     EmptyStr,
     InvalidMove,
     Unimplemented,
 }
 
-impl FromStr for Mov {
+impl FromStr for ParsedMov {
 
     type Err = Error;
 
-    fn from_str(s: &str) -> Result<Mov, Self::Err> {
+    fn from_str(s: &str) -> Result<ParsedMov, Self::Err> {
         let mut it = s.chars();
         match it.next() {
             None => Err(Error::EmptyStr),
@@ -33,7 +40,7 @@ impl FromStr for Mov {
     }
 }
 
-fn parse(c: char, rem: Chars) -> Result<Mov, Error> {
+fn parse(c: char, rem: Chars) -> Result<ParsedMov, Error> {
     match c {
         'O' => parse_castle(rem),
         f @ 'a'...'h' => parse_file(f, rem),
@@ -42,25 +49,27 @@ fn parse(c: char, rem: Chars) -> Result<Mov, Error> {
     }
 }
 
-fn parse_castle(rem: Chars) -> Result<Mov, Error> {
+fn parse_castle(rem: Chars) -> Result<ParsedMov, Error> {
     match rem.as_str() {
-        "-O" => Ok(Mov::CastleKing),
-        "-O-O" => Ok(Mov::CastleQueen),
+        "-O" => Ok(ParsedMov::CastleKing),
+        "-O-O" => Ok(ParsedMov::CastleQueen),
         _ => Err(Error::InvalidMove),
     }
 }
 
-fn parse_file(c: char, rem: Chars) -> Result<Mov, Error> {
+fn parse_file(c: char, rem: Chars) -> Result<ParsedMov, Error> {
+    println!("Unused: {:?}", rem);
     match c {
-        'c' => Ok(Mov::TwoPush(28)),
-        'e' => Ok(Mov::TwoPush(34)),
+        'c' => Ok(ParsedMov::Quiet(PieceType::Pawn, 28)),
+        'e' => Ok(ParsedMov::Quiet(PieceType::Pawn, 34)),
         _ => Err(Error::Unimplemented),
     }
 }
 
-fn parse_piece(p: char, rem: Chars) -> Result<Mov, Error> {
+fn parse_piece(p: char, rem: Chars) -> Result<ParsedMov, Error> {
+    println!("Unused: {:?}", rem);
     match p {
-        'N' => Ok(Mov::Quiet(6, 21)),
+        'N' => Ok(ParsedMov::Quiet(PieceType::Knight, 21)),
         _ => Err(Error::Unimplemented),
     }
 }
