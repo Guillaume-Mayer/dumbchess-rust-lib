@@ -82,11 +82,14 @@ impl Board {
 }
 
 impl Clone for Board {
-    fn clone(&self) -> Board {
+    /*fn clone(&self) -> Board {
         let mut tiles: [Tile; 64] = [Tile::Empty; 64];
         for i in 0..64 {
             tiles[i] = self.tiles[i];
         }
         Board {tiles}
+    }*/
+    fn clone(&self) -> Board {
+        Board {tiles: self.tiles}
     }
 }

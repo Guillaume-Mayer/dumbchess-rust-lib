@@ -1,4 +1,5 @@
 use super::game::Game;
+use super::mov::Mov;
 
 #[test]
 fn init_fen() {
@@ -37,4 +38,34 @@ fn play_e4_c5_nf3_pgn() {
     g.play("c5");
     g.play("Nf3");
     assert_eq!("1.e4 c5 2.Nf3 ", g.to_pgn());
+}
+
+#[test]
+fn parse_move_zz() {
+    let m = "zz".parse::<Mov>();
+    assert!(m.is_err());
+}
+
+#[test]
+#[should_panic(expected = "InvalidMove")]
+fn parse_move_panic() {
+    let m: Mov = "zz".parse().unwrap();
+}
+
+#[test]
+fn parse_move_e4() {
+    let m = "e4".parse::<Mov>();
+    assert!(m.is_ok());
+}
+
+#[test]
+fn parse_move_castle() {
+    match "O-O-O".parse().unwrap() {
+        Mov::CastleQueen => assert!(true),
+        _ => assert!(false, "Castle queen"),
+    };
+    match "O-O".parse().unwrap() {
+        Mov::CastleKing => assert!(true),
+        _ => assert!(false, "Castle king"),
+    };
 }
