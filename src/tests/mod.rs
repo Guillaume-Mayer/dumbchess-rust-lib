@@ -49,12 +49,19 @@ fn parse_move_zz() {
 #[test]
 #[should_panic(expected = "InvalidMove")]
 fn parse_move_panic() {
-    let m: ParsedMov = "zz".parse().unwrap();
+    "zz".parse::<ParsedMov>().unwrap();
 }
 
 #[test]
 fn parse_move_e4() {
     let m = "e4".parse::<ParsedMov>();
+    assert!(m.is_ok());
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn parse_move_Nf3() {
+    let m = "Nf3".parse::<ParsedMov>();
     assert!(m.is_ok());
 }
 

@@ -24,7 +24,6 @@ pub enum ParsedMov {
 pub enum Error {
     EmptyStr,
     InvalidMove,
-    Unimplemented,
 }
 
 impl FromStr for ParsedMov {
@@ -40,12 +39,11 @@ impl FromStr for ParsedMov {
     }
 }
 
-fn parse(c: char, rem: Chars) -> Result<ParsedMov, Error> {
+fn parse(c: char, mut rem: Chars) -> Result<ParsedMov, Error> {
     match c {
         'O' => parse_castle(rem),
-        f @ 'a'...'h' => parse_file(f, rem),
-        'K' | 'Q' | 'R' | 'B' | 'N' => parse_piece('N', rem),
-        _ => Err(Error::InvalidMove),
+        'K'|'Q'|'R'|'B'|'N' => parse_move(parse_piece(c), rem.next(), rem),
+        _ => parse_move(PieceType::Pawn, Some(c), rem),
     }
 }
 
@@ -57,19 +55,38 @@ fn parse_castle(rem: Chars) -> Result<ParsedMov, Error> {
     }
 }
 
-fn parse_file(c: char, rem: Chars) -> Result<ParsedMov, Error> {
-    println!("Unused: {:?}", rem);
-    match c {
-        'c' => Ok(ParsedMov::Quiet(PieceType::Pawn, 28)),
-        'e' => Ok(ParsedMov::Quiet(PieceType::Pawn, 34)),
-        _ => Err(Error::Unimplemented),
+fn parse_move(p: PieceType, f: Option<char>, mut rem: Chars) -> Result<ParsedMov, Error> {
+    match f {
+        None => Err(Error::InvalidMove),
+        Some(f) => match f {
+            'a'...'f' => {
+                let file = parse_file(f);
+                let rank = parse_rank(rem.next().unwrap()).unwrap() as usize;
+                Ok(ParsedMov::Quiet(p, rank * 8 + file))
+            },
+            _ => Err(Error::InvalidMove),
+        },
     }
 }
 
-fn parse_piece(p: char, rem: Chars) -> Result<ParsedMov, Error> {
-    println!("Unused: {:?}", rem);
+fn parse_file(c: char) -> usize {
+    "abcdefgh".find(c).unwrap()
+}
+
+fn parse_rank(c: char) -> Option<u32> {
+    match c.to_digit(10) {
+        None => None,
+        Some(r) => Some(r - 1),
+    }
+}
+
+fn parse_piece(p: char) -> PieceType {
     match p {
-        'N' => Ok(ParsedMov::Quiet(PieceType::Knight, 21)),
-        _ => Err(Error::Unimplemented),
+        'K' => PieceType::King,
+        'Q' => PieceType::Queen,
+        'R' => PieceType::Rook,
+        'B' => PieceType::Bishop,
+        'N' => PieceType::Knight,
+        _ => panic!("Unknow piece char"),
     }
 }

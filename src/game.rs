@@ -17,7 +17,7 @@ impl Game {
 
     pub fn play(&mut self, s: &str) {
         match self.position.move_from_str(s) {
-            Err(e) => println!("ERROR: {}", e),
+            Err(e) => println!("ERROR: {:?}", e),
             Ok(m) => self.play_move(m),
         }
     }

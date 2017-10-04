@@ -1,8 +1,8 @@
 use board::Board;
 use color::Color;
-use mov::Mov;
+use mov::{Mov, ParsedMov, Error};
 use tile::Tile;
-use piece::Piece;
+use piece::{Piece, PieceType};
 
 pub struct Position {
     board: Board,
@@ -26,14 +26,16 @@ impl Position {
         format!("{} {} {} {} {}", self.board.to_fen(), self.color_to_play.to_fen(), "KQkq", self.en_passant_to_fen(), self.half_move_clock)
     }
 
-    pub fn move_from_str(&self, s: &str) -> Result<Mov, &'static str> {
-        match s {
-            "O-O" => Ok(Mov::CastleKing),
-            "O-O-O" => Ok(Mov::CastleQueen),
-            "e4" => Ok(Mov::TwoPush(28)),
-            "c5" => Ok(Mov::TwoPush(34)),
-            "Nf3" => Ok(Mov::Quiet(6, 21)),
-            _ => unimplemented!(),
+    pub fn move_from_str(&self, s: &str) -> Result<Mov, Error> {
+        let m: ParsedMov = s.parse()?;
+        match m {
+            ParsedMov::CastleKing => Ok(Mov::CastleKing),
+            ParsedMov::CastleQueen => Ok(Mov::CastleQueen),
+            ParsedMov::Quiet(p, i2) => match p {
+                PieceType::Pawn => Ok(Mov::TwoPush(i2)),
+                PieceType::Knight => Ok(Mov::Quiet(6, i2)),
+                _ => Err(Error::InvalidMove)
+            },
         }
     }
 
