@@ -4,6 +4,7 @@ mod tile;
 mod board;
 mod position;
 mod mov;
+mod parse;
 
 pub mod game;
 

@@ -1,5 +1,5 @@
 use super::game::Game;
-use super::mov::ParsedMov;
+use super::parse::mov::ParsedMov;
 
 #[test]
 fn init_fen() {
