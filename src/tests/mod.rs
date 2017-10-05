@@ -1,5 +1,5 @@
 use super::game::Game;
-use super::parse::mov::ParsedMov;
+use super::parse::mov::Mov;
 
 #[test]
 fn init_fen() {
@@ -49,44 +49,44 @@ fn play_e4_c5_nf3_pgn() {
 
 #[test]
 fn parse_move_zz() {
-    let m = "zz".parse::<ParsedMov>();
+    let m = "zz".parse::<Mov>();
     assert!(m.is_err());
 }
 
 #[test]
 #[should_panic(expected = "InvalidMove")]
 fn parse_move_panic() {
-    "zz".parse::<ParsedMov>().unwrap();
+    "zz".parse::<Mov>().unwrap();
 }
 
 #[test]
 fn parse_move_e4() {
-    let m = "e4".parse::<ParsedMov>();
+    let m = "e4".parse::<Mov>();
     assert!(m.is_ok());
 }
 
 #[test]
 #[allow(non_snake_case)]
 fn parse_move_Nf3() {
-    let m = "Nf3".parse::<ParsedMov>();
+    let m = "Nf3".parse::<Mov>();
     assert!(m.is_ok());
 }
 
 #[test]
 #[allow(non_snake_case)]
 fn parse_move_Nxf3() {
-    let m = "Nxf3".parse::<ParsedMov>();
+    let m = "Nxf3".parse::<Mov>();
     assert!(m.is_ok());
 }
 
 #[test]
 fn parse_move_castle() {
     match "O-O-O".parse().unwrap() {
-        ParsedMov::CastleQueen => assert!(true),
+        Mov::CastleQueen => assert!(true),
         _ => assert!(false, "Castle queen"),
     };
     match "O-O".parse().unwrap() {
-        ParsedMov::CastleKing => assert!(true),
+        Mov::CastleKing => assert!(true),
         _ => assert!(false, "Castle king"),
     };
 }
