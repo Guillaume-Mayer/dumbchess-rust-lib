@@ -37,7 +37,14 @@ fn play_e4_c5_nf3_pgn() {
     g.play("e4");
     g.play("c5");
     g.play("Nf3");
-    assert_eq!("1.e4 c5 2.Nf3 ", g.to_pgn());
+    assert_eq!("[Event \"?\"]\n\
+                [Site \"?\"]\n\
+                [Date \"????.??.??\"]\n\
+                [Round \"?\"]\n\
+                [White \"You\"]\n\
+                [Black \"Me\"]\n\
+                [Result \"*\"]\n\n\
+                1.e4 c5 2.Nf3 ", g.to_pgn());
 }
 
 #[test]
