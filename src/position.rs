@@ -1,7 +1,8 @@
 use board::Board;
 use color::Color;
 use mov::Mov;
-use parse::mov::{ParsedMov, Error};
+use parse::mov::Mov as ParsedMov;
+use parse::mov::Error;
 use tile::Tile;
 use piece::{Piece, PieceType};
 

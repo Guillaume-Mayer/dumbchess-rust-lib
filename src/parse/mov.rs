@@ -2,7 +2,7 @@ use piece::PieceType;
 use std::str::{FromStr, Chars};
 
 #[derive(Debug)]
-pub enum ParsedMov {
+pub enum Mov {
     CastleKing,
     CastleQueen,
     Quiet(PieceType, usize),
@@ -20,11 +20,11 @@ pub enum Error {
     Unimplemented,
 }
 
-impl FromStr for ParsedMov {
+impl FromStr for Mov {
 
     type Err = Error;
 
-    fn from_str(s: &str) -> Result<ParsedMov, Self::Err> {
+    fn from_str(s: &str) -> Result<Mov, Self::Err> {
         let mut it = s.chars();
         match it.next() {
             None => Err(Error::EmptyStr),
@@ -33,7 +33,7 @@ impl FromStr for ParsedMov {
     }
 }
 
-fn parse(c: char, mut rem: Chars) -> Result<ParsedMov, Error> {
+fn parse(c: char, mut rem: Chars) -> Result<Mov, Error> {
     match c {
         'O' => parse_castle(rem),
         'K'|'Q'|'R'|'B'|'N' => parse_move(parse_piece(c), rem.next(), rem),
@@ -41,22 +41,22 @@ fn parse(c: char, mut rem: Chars) -> Result<ParsedMov, Error> {
     }
 }
 
-fn parse_castle(rem: Chars) -> Result<ParsedMov, Error> {
+fn parse_castle(rem: Chars) -> Result<Mov, Error> {
     match rem.as_str() {
-        "-O" => Ok(ParsedMov::CastleKing),
-        "-O-O" => Ok(ParsedMov::CastleQueen),
+        "-O" => Ok(Mov::CastleKing),
+        "-O-O" => Ok(Mov::CastleQueen),
         _ => Err(Error::InvalidMove),
     }
 }
 
-fn parse_move(p: PieceType, f: Option<char>, mut rem: Chars) -> Result<ParsedMov, Error> {
+fn parse_move(p: PieceType, f: Option<char>, mut rem: Chars) -> Result<Mov, Error> {
     match f {
         None => Err(Error::InvalidMove),
         Some(f) => match f {
             'a'...'h' => {
                 let file = parse_file(f);
                 let rank = parse_rank(rem.next().unwrap()).unwrap() as usize;
-                Ok(ParsedMov::Quiet(p, rank * 8 + file))
+                Ok(Mov::Quiet(p, rank * 8 + file))
             },
             _ => Err(Error::InvalidMove),
         },
