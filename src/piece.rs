@@ -1,6 +1,6 @@
 use color::Color;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum PieceType {
     King,
     Queen,

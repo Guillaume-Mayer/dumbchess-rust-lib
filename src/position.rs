@@ -37,12 +37,12 @@ impl Position {
         match m {
             ParsedMov::CastleKing(_) => Ok(Mov::CastleKing),
             ParsedMov::CastleQueen(_) => Ok(Mov::CastleQueen),
-            ParsedMov::_Quiet(p, _, i2, ..) => match p {
+            ParsedMov::Quiet(p, _, i2, ..) => match p {
                 PieceType::Pawn => Ok(Mov::TwoPush(i2)),
                 PieceType::Knight => Ok(Mov::Quiet(6, i2)),
                 _ => Err(Error::NotImplemented)
             },
-            ParsedMov::_Capture(..) => Err(Error::NotImplemented),
+            ParsedMov::Capture(..) => Err(Error::NotImplemented),
         }
     }
 
