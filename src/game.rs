@@ -3,17 +3,17 @@ use position::Position;
 use std::fmt;
 
 enum Result {
-    Draw,
-    WhiteWins,
-    BlackWins,
+    _Draw,
+    _WhiteWins,
+    _BlackWins,
 }
 
 impl fmt::Display for Result {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Result::Draw => write!(f, "1/2-1/2"),
-            Result::WhiteWins => write!(f, "1-0"),
-            Result::BlackWins => write!(f, "0-1"),
+            Result::_Draw => write!(f, "1/2-1/2"),
+            Result::_WhiteWins => write!(f, "1-0"),
+            Result::_BlackWins => write!(f, "0-1"),
         }
     }
 }
