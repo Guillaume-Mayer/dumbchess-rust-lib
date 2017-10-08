@@ -1,6 +1,7 @@
 use piece::PieceType;
 use std::str::{FromStr, Chars};
 
+#[derive(Debug)]
 pub enum Mov {
     CastleKing(Indicator),
     CastleQueen(Indicator),
@@ -8,19 +9,22 @@ pub enum Mov {
     Capture(PieceType, From, usize, Promotion, Indicator),
 }
 
+#[derive(Debug)]
 pub enum Indicator {
     None,
     Check,
     CheckMate,
 }
 
+#[derive(Debug)]
 pub enum From {
     None,
     _File(usize),
     _Rank(usize),
-    _Full(usize)
+    Full(usize)
 }
 
+#[derive(Debug)]
 pub enum Promotion {
     None,
     Queen,
@@ -72,13 +76,21 @@ fn parse_castle(o: char, mut it: Chars) -> Result<Mov, Error> {
 fn parse_move(p: PieceType, c: Option<char>, mut it: Chars) -> Result<Mov, Error> {
     match (c, it.next(), it.next()) {
         (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), None) => {          
-            Ok(Mov::Quiet(p, From::None, parse_tile(f, r), Promotion::None, Indicator::None))
+            Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, Promotion::None, Indicator::None))
         },
         (Some(_f @ 'a'...'h'), Some(_r @ '1'...'8'), Some('x')) => {
             Err(Error::NotImplemented)
         },
-        (Some(_f @ 'a'...'h'), Some(_r @ '1'...'8'), Some('-')) => {
-            Err(Error::NotImplemented)
+        (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), Some('-')) => {
+            let from = From::Full(parse_tile(Some(f), Some(r))?);
+            let to = parse_tile(it.next(), it.next())?;
+            let mut c = it.next();
+            let prom = if p == PieceType::Pawn {
+                parse_promotion(&mut c, it)?
+            } else {
+                Promotion::None
+            };
+            Ok(Mov::Quiet(p, from, to, prom, parse_end(c)?))
         },
         (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), Some(c)) => {
             let mut c = Some(c);
@@ -87,7 +99,7 @@ fn parse_move(p: PieceType, c: Option<char>, mut it: Chars) -> Result<Mov, Error
             } else {
                 Promotion::None
             };
-            Ok(Mov::Quiet(p, From::None, parse_tile(f, r), prom, parse_end(c)?))
+            Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, prom, parse_end(c)?))
         },
         (Some(_f1 @ 'a'...'h'), Some('x'), Some(_f2 @ 'a'...'h')) => {
             Err(Error::NotImplemented)
@@ -99,8 +111,7 @@ fn parse_move(p: PieceType, c: Option<char>, mut it: Chars) -> Result<Mov, Error
             Err(Error::NotImplemented)
         },
         (Some('x'), Some(f @ 'a'...'h'), Some(r @ '1'...'8')) if p != PieceType::Pawn => {
-            let i = parse_end(it.next())?;
-            Ok(Mov::Capture(p, From::None, parse_tile(f, r), Promotion::None, i))
+            Ok(Mov::Capture(p, From::None, parse_tile(Some(f), Some(r))?, Promotion::None, parse_end(it.next())?))
         },
         _ => Err(Error::InvalidMove),
     }
@@ -164,6 +175,9 @@ fn parse_rank(r: char) -> usize {
     "12345678".find(r).unwrap()
 }
 
-fn parse_tile(f: char, r: char) -> usize {
-    parse_file(f) + parse_rank(r) * 8
+fn parse_tile(f: Option<char>, r: Option<char>) -> Result<usize, Error> {
+    match (f, r) {
+        (Some(f), Some(r)) => Ok(parse_file(f) + parse_rank(r) * 8),
+        _ => Err(Error::InvalidMove),
+    }
 }

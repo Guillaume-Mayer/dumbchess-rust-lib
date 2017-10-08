@@ -22,12 +22,6 @@ fn parse_move_zz() {
 }
 
 #[test]
-#[should_panic(expected = "InvalidMove")]
-fn parse_move_panic() {
-    "zz".parse::<Mov>().unwrap();
-}
-
-#[test]
 fn parse_move_e4() {
     match "e4".parse() {
         Ok(Mov::Quiet(PieceType::Pawn, From::None, 28, Promotion::None, Indicator::None)) => (),
@@ -44,6 +38,30 @@ fn parse_move_e4() {
     match "e4z".parse::<Mov>() {
         Err(Error::InvalidMove) => (),
         _ => assert!(false, "e4z"),
+    };
+}
+
+#[test]
+fn parse_e2_e4() {
+    match "e2-e4".parse() {
+        Ok(Mov::Quiet(PieceType::Pawn, From::Full(12), 28, Promotion::None, Indicator::None)) => {},
+        _ => assert!(false, "e2-e4"),
+    };
+    match "e2-e4+".parse() {
+        Ok(Mov::Quiet(PieceType::Pawn, From::Full(12), 28, Promotion::None, Indicator::Check)) => {},
+        _ => assert!(false, "e2-e4+"),
+    };
+    match "e2-e4#".parse() {
+        Ok(Mov::Quiet(PieceType::Pawn, From::Full(12), 28, Promotion::None, Indicator::CheckMate)) => {},
+        _ => assert!(false, "e2-e4#"),
+    };
+    match "e2-e4Q+".parse() {
+        Ok(Mov::Quiet(PieceType::Pawn, From::Full(12), 28, Promotion::Queen, Indicator::Check)) => {},
+        _ => assert!(false, "e2-e4Q+"),
+    };
+    match "e2-e4=N#".parse() {
+        Ok(Mov::Quiet(PieceType::Pawn, From::Full(12), 28, Promotion::Knight, Indicator::CheckMate)) => {},
+        _ => assert!(false, "e2-e4=N#"),
     };
 }
 
