@@ -20,7 +20,7 @@ pub enum Indicator {
 pub enum From {
     None,
     File(usize),
-    _Rank(usize),
+    Rank(usize),
     Full(usize)
 }
 
@@ -104,11 +104,19 @@ fn parse_move(p: PieceType, c: Option<char>, mut it: Chars) -> Result<Mov, Error
             let prom = parse_promotion(p, &mut c, it)?;
             Ok(Mov::Capture(p, from, to, prom, parse_end(c)?))
         },
-        (Some(_r1 @ '1'...'8'), Some(_f @ 'a'...'h'), Some(_r2 @ '1'...'8')) => {
-            Err(Error::NotImplemented)
+        (Some(r1 @ '1'...'8'), Some(f @ 'a'...'h'), Some(r2 @ '1'...'8')) => {
+            let from = From::Rank(parse_rank(r1));
+            let to = parse_tile(Some(f), Some(r2))?;
+            let mut c = it.next();
+            let prom = parse_promotion(p, &mut c, it)?;
+            Ok(Mov::Quiet(p, from, to, prom, parse_end(c)?))
         },
-        (Some(_r @ '1'...'8'), Some('x'), Some(_f @ 'a'...'h')) => {
-            Err(Error::NotImplemented)
+        (Some(r @ '1'...'8'), Some('x'), Some(f @ 'a'...'h')) => {
+            let from = From::Rank(parse_rank(r));
+            let to = parse_tile(Some(f), it.next())?;
+            let mut c = it.next();
+            let prom = parse_promotion(p, &mut c, it)?;
+            Ok(Mov::Capture(p, from, to, prom, parse_end(c)?))
         },
         (Some('x'), Some(f @ 'a'...'h'), Some(r @ '1'...'8')) if p != PieceType::Pawn => {
             Ok(Mov::Capture(p, From::None, parse_tile(Some(f), Some(r))?, Promotion::None, parse_end(it.next())?))

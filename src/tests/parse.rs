@@ -103,6 +103,24 @@ fn parse_exd5() {
 }
 
 #[test]
+#[allow(non_snake_case)]
+fn parse_N3xd5() {
+    match "N3xd5".parse() {
+        Ok(Mov::Capture(PieceType::Knight, From::Rank(2), 35, Promotion::None, Indicator::None)) => {},
+        _ => assert!(false, "N3xd5"),
+    };
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn parse_R1a6() {
+    match "R1a6".parse() {
+        Ok(Mov::Quiet(PieceType::Rook, From::Rank(0), 40, Promotion::None, Indicator::None)) => {},
+        _ => assert!(false, "R1a6"),
+    }
+}
+
+#[test]
 fn parse_promotion() {
     match "e8=Q".parse() {
         Ok(Mov::Quiet(PieceType::Pawn, From::None, 60, Promotion::Queen, Indicator::None)) => (),
