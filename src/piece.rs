@@ -73,10 +73,14 @@ impl Piece {
         }
     }
 
-    pub fn to_san(&self) -> String {
+    pub fn to_san(&self) -> &str {
         match self.piece {
-            PieceType::Pawn => String::default(),
-            p => p.to_fen().to_string(),
+            PieceType::Pawn => "",
+            PieceType::King => "K",
+            PieceType::Queen => "Q",
+            PieceType::Rook => "R",
+            PieceType::Bishop => "B",
+            PieceType::Knight => "N",
         }
     }
 }
