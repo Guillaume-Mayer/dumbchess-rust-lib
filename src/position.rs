@@ -188,4 +188,10 @@ impl Position {
             },
         }
     }
+
+    pub fn moves(&self) -> Vec<Mov> {
+        let moves = Vec::new();
+        self.board.pieces(self.color_to_play);
+        moves
+    }
 }

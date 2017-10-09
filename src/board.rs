@@ -91,10 +91,91 @@ impl Board {
     pub fn empty(&mut self, i: usize) {
         self.tiles[i] = Tile::Empty;
     }
+
+    pub fn pieces(&self, color: Color) -> Pieces {
+        Pieces::new(color, self.tiles)
+    }
+
 }
 
 impl Clone for Board {
     fn clone(&self) -> Board {
         Board {tiles: self.tiles}
+    }
+}
+
+pub struct Item {
+    pub piece: PieceType,
+    pub index: usize,
+}
+
+pub struct Pieces {
+    color: Color,
+    tiles: [Tile; 64],
+    index: usize,
+    done: bool,
+    found: u8,
+}
+
+impl Pieces {
+
+    fn new(color: Color, tiles: [Tile; 64]) -> Pieces {
+        Pieces {
+            color,
+            tiles,
+            index: if color == Color::White {0} else {63},
+            done: false,
+            found: 0,
+        }
+    }
+
+    fn step(&mut self) -> bool {
+        match self.color {
+            Color::White => {
+                if self.index == 63 {
+                    self.done = true;
+                } else {
+                    self.index += 1;
+                }
+            },
+            Color::Black => {
+                if self.index == 0 {
+                    self.done = true;
+                } else {
+                    self.index -= 1;
+                }
+            },
+        }
+        self.done
+    }
+
+    fn found(&mut self, p: PieceType) -> Option<Item> {
+        self.found += 1;
+        if self.found == 16 {
+            self.done = true;
+        }
+        Some(Item {piece: p, index: self.index})
+    }
+}
+
+impl Iterator for Pieces {
+    type Item = Item;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.done {
+            return None;
+        }
+        let mut next = None;
+        while let None = next {
+            match self.tiles[self.index] {
+                Tile::Occupied(p) if p.color() == self.color => {
+                    next = self.found(p.piece());
+                },
+                _ => {},
+            };
+            if self.step() {
+                break;
+            }
+        }
+        next
     }
 }

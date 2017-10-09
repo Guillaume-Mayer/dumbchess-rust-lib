@@ -57,7 +57,6 @@ fn play_en_passant_fen() {
     g.play("e4-e5");
     g.play("d5");
     g.play("e5xd6");
-    println!("{}", g.to_pgn());
     assert_eq!("r1bqkbnr/ppp1pppp/2nP4/8/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 3", g.to_fen());
 }
 

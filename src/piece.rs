@@ -90,4 +90,13 @@ impl Piece {
             _ => false,
         }
     }
+
+    pub fn color(&self) -> Color {
+        self.color
+    }
+
+    pub fn piece(&self) -> PieceType {
+        self.piece
+    }
+
 }

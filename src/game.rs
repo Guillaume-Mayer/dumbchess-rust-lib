@@ -113,4 +113,8 @@ impl Game {
     pub fn to_str(&self) -> String {
         self.position.to_str()
     }
+
+    pub fn moves(&self) -> Vec<Mov> {
+        self.position.moves()
+    }
 }
