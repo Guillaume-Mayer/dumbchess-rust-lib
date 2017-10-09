@@ -55,13 +55,50 @@ fn parse_e2_e4() {
         Ok(Mov::Quiet(PieceType::Pawn, From::Full(12), 28, Promotion::None, Indicator::CheckMate)) => {},
         _ => assert!(false, "e2-e4#"),
     };
-    match "e2-e4Q+".parse() {
-        Ok(Mov::Quiet(PieceType::Pawn, From::Full(12), 28, Promotion::Queen, Indicator::Check)) => {},
+}
+
+#[test]
+fn parse_e7_e8() {
+    match "e7-e8R".parse() {
+        Ok(Mov::Quiet(PieceType::Pawn, From::Full(52), 60, Promotion::Rook, Indicator::None)) => {},
         _ => assert!(false, "e2-e4Q+"),
     };
-    match "e2-e4=N#".parse() {
-        Ok(Mov::Quiet(PieceType::Pawn, From::Full(12), 28, Promotion::Knight, Indicator::CheckMate)) => {},
+    match "e7-e8Q+".parse() {
+        Ok(Mov::Quiet(PieceType::Pawn, From::Full(52), 60, Promotion::Queen, Indicator::Check)) => {},
+        _ => assert!(false, "e2-e4Q+"),
+    };
+    match "e7-e8=N#".parse() {
+        Ok(Mov::Quiet(PieceType::Pawn, From::Full(52), 60, Promotion::Knight, Indicator::CheckMate)) => {},
         _ => assert!(false, "e2-e4=N#"),
+    };
+    match "e7-e8=B".parse() {
+        Ok(Mov::Quiet(PieceType::Pawn, From::Full(52), 60, Promotion::Bishop, Indicator::None)) => {},
+        _ => assert!(false, "e2-e4=N#"),
+    };
+}
+
+#[test]
+#[allow(non_snake_case)]
+fn parse_Qd1xe2() {
+    match "Qd1xe2".parse() {
+        Ok(Mov::Capture(PieceType::Queen, From::Full(3), 12, Promotion::None, Indicator::None)) => {},
+        _ => assert!(false, "Qd1xe2"),
+    };
+    match "Qd1xe2+".parse() {
+        Ok(Mov::Capture(PieceType::Queen, From::Full(3), 12, Promotion::None, Indicator::Check)) => {},
+        _ => assert!(false, "Qd1xe2+"),
+    };
+    match "Qd1xe2#".parse() {
+        Ok(Mov::Capture(PieceType::Queen, From::Full(3), 12, Promotion::None, Indicator::CheckMate)) => {},
+        _ => assert!(false, "Qd1xe2#"),
+    };
+}
+
+#[test]
+fn parse_exd5() {
+    match "exd5".parse() {
+        Ok(Mov::Capture(PieceType::Pawn, From::File(4), 35, Promotion::None, Indicator::None)) => {},
+        _ => assert!(false, "exd5"),
     };
 }
 

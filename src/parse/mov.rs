@@ -19,7 +19,7 @@ pub enum Indicator {
 #[derive(Debug)]
 pub enum From {
     None,
-    _File(usize),
+    File(usize),
     _Rank(usize),
     Full(usize)
 }
@@ -78,8 +78,12 @@ fn parse_move(p: PieceType, c: Option<char>, mut it: Chars) -> Result<Mov, Error
         (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), None) => {          
             Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, Promotion::None, Indicator::None))
         },
-        (Some(_f @ 'a'...'h'), Some(_r @ '1'...'8'), Some('x')) => {
-            Err(Error::NotImplemented)
+        (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), Some('x')) => {
+            let from = From::Full(parse_tile(Some(f), Some(r))?);
+            let to = parse_tile(it.next(), it.next())?;
+            let mut c = it.next();
+            let prom = parse_promotion(p, &mut c, it)?;
+            Ok(Mov::Capture(p, from, to, prom, parse_end(c)?))
         },
         (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), Some('-')) => {
             let from = From::Full(parse_tile(Some(f), Some(r))?);
@@ -93,8 +97,12 @@ fn parse_move(p: PieceType, c: Option<char>, mut it: Chars) -> Result<Mov, Error
             let prom = parse_promotion(p, &mut c, it)?;
             Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, prom, parse_end(c)?))
         },
-        (Some(_f1 @ 'a'...'h'), Some('x'), Some(_f2 @ 'a'...'h')) => {
-            Err(Error::NotImplemented)
+        (Some(f1 @ 'a'...'h'), Some('x'), Some(f2 @ 'a'...'h')) => {
+            let from = From::File(parse_file(f1));
+            let to = parse_tile(Some(f2), it.next())?;
+            let mut c = it.next();
+            let prom = parse_promotion(p, &mut c, it)?;
+            Ok(Mov::Capture(p, from, to, prom, parse_end(c)?))
         },
         (Some(_r1 @ '1'...'8'), Some(_f @ 'a'...'h'), Some(_r2 @ '1'...'8')) => {
             Err(Error::NotImplemented)
