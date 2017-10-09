@@ -165,15 +165,15 @@ impl Position {
             },
             Mov::Capture(i1, i2) | Mov::EnPassant(i1, i2) => match self.board.tile_at(i1) {
                 Tile::Empty => panic!("Empty tile"),
-                Tile::Occupied(p) => format!("{}x{}", p.to_fen(), Self::index_to_str(i2)),
+                Tile::Occupied(p) => format!("{}x{}", p.to_san(), Self::index_to_str(i2)),
             },
             Mov::Promotion(i1, i2, ref pr) => match self.board.tile_at(i1) {
                 Tile::Empty => panic!("Empty tile"),
-                Tile::Occupied(p) => format!("{}{}={}", p.to_fen(), Self::index_to_str(i2), pr.to_san()),
+                Tile::Occupied(p) => format!("{}{}={}", p.to_san(), Self::index_to_str(i2), pr.to_san()),
             },
             Mov::PromotionCapture(i1, i2, ref pr) => match self.board.tile_at(i1) {
                 Tile::Empty => panic!("Empty tile"),
-                Tile::Occupied(p) => format!("{}x{}={}", p.to_fen(), Self::index_to_str(i2), pr.to_san()),
+                Tile::Occupied(p) => format!("{}x{}={}", p.to_san(), Self::index_to_str(i2), pr.to_san()),
             },
         }
     }
