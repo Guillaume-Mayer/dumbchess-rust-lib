@@ -5,8 +5,10 @@ use std::str::{FromStr, Chars};
 pub enum Mov {
     CastleKing(Indicator),
     CastleQueen(Indicator),
-    Quiet(PieceType, From, usize, Promotion, Indicator),
-    Capture(PieceType, From, usize, Promotion, Indicator),
+    Quiet(PieceType, From, usize, Indicator),
+    Capture(PieceType, From, usize, Indicator),
+    Promotion(From, usize, Promotion, Indicator),
+    PromotionCapture(From, usize, Promotion, Indicator),
 }
 
 #[derive(Debug)]
@@ -26,7 +28,6 @@ pub enum From {
 
 #[derive(Debug)]
 pub enum Promotion {
-    None,
     Queen,
     Rook,
     Bishop,
@@ -74,39 +75,57 @@ fn parse_castle(o: char, mut it: Chars) -> Result<Mov, Error> {
 
 fn parse_move(p: PieceType, c: Option<char>, mut it: Chars) -> Result<Mov, Error> {
     match (c, it.next(), it.next()) {
-        (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), None) => {          
-            Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, Promotion::None, Indicator::None))
+        (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), None) => {       
+            Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, Indicator::None))
         },
         (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), Some('x')) => {
             let to = parse_tile(it.next(), it.next())?;
             let mut c = it.next();
-            Ok(Mov::Capture(p, From::Full(parse_tile(Some(f), Some(r))?), to, parse_promotion(p, &mut c, it)?, parse_end(c)?))
+            match parse_promotion(p, &mut c, it) {
+                None => Ok(Mov::Capture(p, From::Full(parse_tile(Some(f), Some(r))?), to, parse_end(c)?)),
+                Some(p) => Ok(Mov::PromotionCapture(From::Full(parse_tile(Some(f), Some(r))?), to, p, parse_end(c)?))
+            }
         },
         (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), Some('-')) => {
             let to = parse_tile(it.next(), it.next())?;
             let mut c = it.next();
-            Ok(Mov::Quiet(p, From::Full(parse_tile(Some(f), Some(r))?), to, parse_promotion(p, &mut c, it)?, parse_end(c)?))
+            match parse_promotion(p, &mut c, it) {
+                None => Ok(Mov::Quiet(p, From::Full(parse_tile(Some(f), Some(r))?), to, parse_end(c)?)),
+                Some(p) => Ok(Mov::Promotion(From::Full(parse_tile(Some(f), Some(r))?), to, p, parse_end(c)?)),
+            }
         },
         (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), Some(c)) => {
             let mut c = Some(c);
-            Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, parse_promotion(p, &mut c, it)?, parse_end(c)?))
+            match parse_promotion(p, &mut c, it) {
+                None => Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, parse_end(c)?)),
+                Some(p) => Ok(Mov::Promotion(From::None, parse_tile(Some(f), Some(r))?, p, parse_end(c)?))
+            }            
         },
         (Some(f1 @ 'a'...'h'), Some('x'), Some(f2 @ 'a'...'h')) => {
             let to = parse_tile(Some(f2), it.next())?;
             let mut c = it.next();
-            Ok(Mov::Capture(p, From::File(parse_file(f1)?), to, parse_promotion(p, &mut c, it)?, parse_end(c)?))
+            match parse_promotion(p, &mut c, it) {
+                None => Ok(Mov::Capture(p, From::File(parse_file(f1)?), to, parse_end(c)?)),
+                Some(p) => Ok(Mov::PromotionCapture(From::File(parse_file(f1)?), to, p, parse_end(c)?)),
+            }
         },
         (Some(r1 @ '1'...'8'), Some(f @ 'a'...'h'), Some(r2 @ '1'...'8')) => {
             let mut c = it.next();
-            Ok(Mov::Quiet(p, From::Rank(parse_rank(r1)?), parse_tile(Some(f), Some(r2))?, parse_promotion(p, &mut c, it)?, parse_end(c)?))
+            match parse_promotion(p, &mut c, it) {
+                None => Ok(Mov::Quiet(p, From::Rank(parse_rank(r1)?), parse_tile(Some(f), Some(r2))?, parse_end(c)?)),
+                Some(p) => Ok(Mov::Promotion(From::Rank(parse_rank(r1)?), parse_tile(Some(f), Some(r2))?, p, parse_end(c)?)),
+            }           
         },
         (Some(r @ '1'...'8'), Some('x'), Some(f @ 'a'...'h')) => {
             let to = parse_tile(Some(f), it.next())?;
             let mut c = it.next();
-            Ok(Mov::Capture(p, From::Rank(parse_rank(r)?), to, parse_promotion(p, &mut c, it)?, parse_end(c)?))
+            match parse_promotion(p, &mut c, it) {
+                None => Ok(Mov::Capture(p, From::Rank(parse_rank(r)?), to, parse_end(c)?)),
+                Some(prom) => Ok(Mov::PromotionCapture(From::Rank(parse_rank(r)?), to, prom, parse_end(c)?)),
+            }          
         },
         (Some('x'), Some(f @ 'a'...'h'), Some(r @ '1'...'8')) if p != PieceType::Pawn => {
-            Ok(Mov::Capture(p, From::None, parse_tile(Some(f), Some(r))?, Promotion::None, parse_end(it.next())?))
+            Ok(Mov::Capture(p, From::None, parse_tile(Some(f), Some(r))?, parse_end(it.next())?))
         },
         _ => Err(Error::InvalidMove),
     }
@@ -121,48 +140,48 @@ fn parse_end(c: Option<char>) -> Result<Indicator, Error> {
     }
 }
 
-fn parse_promotion(p: PieceType, c: &mut Option<char>, mut it: Chars) -> Result<Promotion, Error> {
+fn parse_promotion(p: PieceType, c: &mut Option<char>, mut it: Chars) -> Option<Promotion> {
     if p == PieceType::Pawn {
         match (*c, it.next()) {
             (Some('Q'), x) => {
                 *c = x;
-                Ok(Promotion::Queen)
+                Some(Promotion::Queen)
             },
             (Some('N'), x) => {
                 *c = x;
-                Ok(Promotion::Knight)
+                Some(Promotion::Knight)
             },
             (Some('R'), x) => {
                 *c = x;
-                Ok(Promotion::Rook)
+                Some(Promotion::Rook)
             },
             (Some('B'), x) => {
                 *c = x;
-                Ok(Promotion::Bishop)
+                Some(Promotion::Bishop)
             },
             (Some('='), Some('Q')) => {
                 *c = it.next();
-                Ok(Promotion::Queen)
+                Some(Promotion::Queen)
             },
             (Some('='), Some('N')) => {
                 *c = it.next();
-                Ok(Promotion::Knight)
+                Some(Promotion::Knight)
             },
             (Some('='), Some('R')) => {
                 *c = it.next();
-                Ok(Promotion::Rook)
+                Some(Promotion::Rook)
             },
             (Some('='), Some('B')) => {
                 *c = it.next();
-                Ok(Promotion::Bishop)
+                Some(Promotion::Bishop)
             },
             (x, _) => {
                 *c = x;
-                Ok(Promotion::None)
+                None
             },
         }
     } else {
-        Ok(Promotion::None)
+        None
     }
 }
 
