@@ -85,20 +85,12 @@ fn parse_move(p: PieceType, c: Option<char>, mut it: Chars) -> Result<Mov, Error
             let from = From::Full(parse_tile(Some(f), Some(r))?);
             let to = parse_tile(it.next(), it.next())?;
             let mut c = it.next();
-            let prom = if p == PieceType::Pawn {
-                parse_promotion(&mut c, it)?
-            } else {
-                Promotion::None
-            };
+            let prom = parse_promotion(p, &mut c, it)?;
             Ok(Mov::Quiet(p, from, to, prom, parse_end(c)?))
         },
         (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), Some(c)) => {
             let mut c = Some(c);
-            let prom = if p == PieceType::Pawn {
-                parse_promotion(&mut c, it)?
-            } else {
-                Promotion::None
-            };
+            let prom = parse_promotion(p, &mut c, it)?;
             Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, prom, parse_end(c)?))
         },
         (Some(_f1 @ 'a'...'h'), Some('x'), Some(_f2 @ 'a'...'h')) => {
@@ -126,44 +118,48 @@ fn parse_end(c: Option<char>) -> Result<Indicator, Error> {
     }
 }
 
-fn parse_promotion(c: &mut Option<char>, mut it: Chars) -> Result<Promotion, Error> {
-    match (*c, it.next()) {
-        (Some('Q'), x) => {
-            *c = x;
-            Ok(Promotion::Queen)
-        },
-        (Some('N'), x) => {
-            *c = x;
-            Ok(Promotion::Knight)
-        },
-        (Some('R'), x) => {
-            *c = x;
-            Ok(Promotion::Rook)
-        },
-        (Some('B'), x) => {
-            *c = x;
-            Ok(Promotion::Bishop)
-        },
-        (Some('='), Some('Q')) => {
-            *c = it.next();
-            Ok(Promotion::Queen)
-        },
-        (Some('='), Some('N')) => {
-            *c = it.next();
-            Ok(Promotion::Knight)
-        },
-        (Some('='), Some('R')) => {
-            *c = it.next();
-            Ok(Promotion::Rook)
-        },
-        (Some('='), Some('B')) => {
-            *c = it.next();
-            Ok(Promotion::Bishop)
-        },
-        (x, _) => {
-            *c = x;
-            Ok(Promotion::None)
-        },
+fn parse_promotion(p: PieceType, c: &mut Option<char>, mut it: Chars) -> Result<Promotion, Error> {
+    if p == PieceType::Pawn {
+        match (*c, it.next()) {
+            (Some('Q'), x) => {
+                *c = x;
+                Ok(Promotion::Queen)
+            },
+            (Some('N'), x) => {
+                *c = x;
+                Ok(Promotion::Knight)
+            },
+            (Some('R'), x) => {
+                *c = x;
+                Ok(Promotion::Rook)
+            },
+            (Some('B'), x) => {
+                *c = x;
+                Ok(Promotion::Bishop)
+            },
+            (Some('='), Some('Q')) => {
+                *c = it.next();
+                Ok(Promotion::Queen)
+            },
+            (Some('='), Some('N')) => {
+                *c = it.next();
+                Ok(Promotion::Knight)
+            },
+            (Some('='), Some('R')) => {
+                *c = it.next();
+                Ok(Promotion::Rook)
+            },
+            (Some('='), Some('B')) => {
+                *c = it.next();
+                Ok(Promotion::Bishop)
+            },
+            (x, _) => {
+                *c = x;
+                Ok(Promotion::None)
+            },
+        }
+    } else {
+        Ok(Promotion::None)
     }
 }
 
