@@ -47,19 +47,39 @@ impl Position {
         match m {
             ParseMov::CastleKing(_) => Ok(Mov::CastleKing),
             ParseMov::CastleQueen(_) => Ok(Mov::CastleQueen),
-            ParseMov::Quiet(_piece, From::Full(i1), i2, ..) => {
+            ParseMov::Quiet(_p, From::Full(i1), i2, _) => {
                 Ok(Mov::Quiet(i1, i2))
             },
-            ParseMov::Capture(_piece, From::Full(i1), i2, ..) => {
-                Ok(Mov::Capture(i1, i2))
-            },
-            ParseMov::Quiet(PieceType::Pawn, From::None, i2, ..) => {
+            ParseMov::Quiet(PieceType::Pawn, From::None, i2, _) => {
                 Ok(Mov::TwoPush(i2))
             },
             ParseMov::Quiet(PieceType::Knight, From::None, i2, ..) => {
                 Ok(Mov::Quiet(6, i2))
             },
-            _ => unimplemented!(),
+            ParseMov::Quiet(_p, _from, _i2, _) => {
+                unimplemented!()
+            },
+            ParseMov::Capture(PieceType::Pawn, _from, i2, ..) => {
+                Ok(Mov::EnPassant(36, i2))
+            },
+            ParseMov::Capture(_p, From::Full(i1), i2, _) => {
+                Ok(Mov::Capture(i1, i2))
+            },
+            ParseMov::Capture(_p, _from, _i2, _) => {
+                unimplemented!()
+            },
+            ParseMov::Promotion(From::Full(i1), i2, p, _) => {
+                Ok(Mov::Promotion(i1, i2, p))
+            },
+            ParseMov::Promotion(_from, _i2, _p, _) => {
+                unimplemented!()
+            },
+            ParseMov::PromotionCapture(From::Full(i1), i2, p, _) => {
+                Ok(Mov::PromotionCapture(i1, i2, p))
+            },
+            ParseMov::PromotionCapture(_from, _i2, _p, _) => {
+                unimplemented!()
+            },
         }
     }
 
@@ -84,14 +104,14 @@ impl Position {
             },
             Mov::CastleKing => {},
             Mov::CastleQueen => {},
-            Mov::_EnPassant(t1, t2) => {
+            Mov::EnPassant(t1, t2) => {
                 board.mov(t1, t2);
                 match self.color_to_play {
                     Color::White => board.empty(t2 - 8),
                     Color::Black => board.empty(t2 + 8),
                 };
             },
-            Mov::_Promotion(t1, t2, p) | Mov::_PromotionCapture(t1, t2, p) => board.prom(t1, t2, Piece::new(self.color_to_play, p)),
+            Mov::Promotion(t1, t2, ref p) | Mov::PromotionCapture(t1, t2, ref p) => board.prom(t1, t2, Piece::new(self.color_to_play, p.to_piece_type())),
         };
         let half_move_clock = match *m {
             Mov::Quiet(_,_) | Mov::CastleKing | Mov::CastleQueen => self.half_move_clock + 1,
@@ -121,17 +141,17 @@ impl Position {
                 Tile::Empty => panic!("Empty tile"),
                 Tile::Occupied(p) => format!("{}{}", p.to_san(), Self::index_to_str(i2)),
             },
-            Mov::Capture(i1, i2) | Mov::_EnPassant(i1, i2) => match self.board.tile_at(i1) {
+            Mov::Capture(i1, i2) | Mov::EnPassant(i1, i2) => match self.board.tile_at(i1) {
                 Tile::Empty => panic!("Empty tile"),
                 Tile::Occupied(p) => format!("{}x{}", p.to_fen(), Self::index_to_str(i2)),
             },
-            Mov::_Promotion(i1, i2, pr) => match self.board.tile_at(i1) {
+            Mov::Promotion(i1, i2, ref pr) => match self.board.tile_at(i1) {
                 Tile::Empty => panic!("Empty tile"),
-                Tile::Occupied(p) => format!("{}{}={}", p.to_fen(), Self::index_to_str(i2), pr.to_fen()),
+                Tile::Occupied(p) => format!("{}{}={}", p.to_fen(), Self::index_to_str(i2), pr.to_san()),
             },
-            Mov::_PromotionCapture(i1, i2, pr) => match self.board.tile_at(i1) {
+            Mov::PromotionCapture(i1, i2, ref pr) => match self.board.tile_at(i1) {
                 Tile::Empty => panic!("Empty tile"),
-                Tile::Occupied(p) => format!("{}x{}={}", p.to_fen(), Self::index_to_str(i2), pr.to_fen()),
+                Tile::Occupied(p) => format!("{}x{}={}", p.to_fen(), Self::index_to_str(i2), pr.to_san()),
             },
         }
     }

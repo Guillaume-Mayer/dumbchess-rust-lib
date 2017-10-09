@@ -1,4 +1,5 @@
 use piece::PieceType;
+use mov::Promotion;
 use std::str::{FromStr, Chars};
 
 #[derive(Debug)]
@@ -24,14 +25,6 @@ pub enum From {
     File(usize),
     Rank(usize),
     Full(usize)
-}
-
-#[derive(Debug)]
-pub enum Promotion {
-    Queen,
-    Rook,
-    Bishop,
-    Knight,
 }
 
 #[derive(Debug)]

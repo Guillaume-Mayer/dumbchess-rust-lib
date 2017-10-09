@@ -1,5 +1,6 @@
 use parse::mov::*;
 use piece::PieceType;
+use mov::Promotion;
 
 #[test]
 fn parse_move_empty() {
