@@ -1,11 +1,12 @@
 use board::Board;
+use board::Item;
 use color::Color;
 use mov::Mov;
 use parse::mov::Mov as ParseMov;
 use parse::mov::Error as ParseError;
 use parse::mov::{From};
 use tile::Tile;
-use piece::*;
+use piece::{Piece, PieceType};
 
 pub struct Position {
     board: Board,
@@ -191,8 +192,23 @@ impl Position {
 
     pub fn moves(&self) -> Vec<Mov> {
         self.board.pieces(self.color_to_play)
-            .filter(|i| i.piece == PieceType::Pawn)
-            .map(|p| Mov::TwoPush(p.index + 16))
+            .flat_map(|p| self.moves_piece(p))
             .collect()
+    }
+
+    fn moves_piece(&self, p: Item) -> Vec<Mov> {
+        match p.piece {
+            PieceType::Pawn => self.moves_pawn(p.index),
+            PieceType::Knight => self.moves_knight(p.index),
+            _ => vec![],
+        }
+    }
+
+    fn moves_pawn(&self, i: usize) -> Vec<Mov> {
+        vec![Mov::Quiet(i, i + 8), Mov::TwoPush(i + 16)]
+    }
+
+    fn moves_knight(&self, i: usize) -> Vec<Mov> {
+        vec![Mov::Quiet(i, i + 15), Mov::Quiet(i, i + 17)]
     }
 }

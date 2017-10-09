@@ -114,7 +114,9 @@ impl Game {
         self.position.to_str()
     }
 
-    pub fn moves(&self) -> Vec<Mov> {
-        self.position.moves()
+    pub fn print_moves(&self) {
+        for (i, m) in self.position.moves().iter().enumerate() {
+            println!("{} : {}", i + 1, self.position.move_to_san(m));
+        }
     }
 }
