@@ -41,3 +41,10 @@ fn play_e4_c5_Nf3_pgn() {
                 [Result \"*\"]\n\n\
                 1.e4 c5 2.Nf3 ", g.to_pgn());
 }
+
+#[test]
+fn play_e2_e3_fen() {
+    let mut g = Game::new();
+    g.play("e2-e3");
+    assert_eq!("rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1", g.to_fen());
+}

@@ -17,7 +17,7 @@ pub struct Position {
 #[derive(Debug)]
 pub enum MoveError {
     ParseMoveError(ParseError),
-    _IllegalMove,
+    _IllegalMove(&'static str),
 }
 
 impl Position {
@@ -53,17 +53,17 @@ impl Position {
             ParseMov::Quiet(PieceType::Pawn, From::None, i2, _) => {
                 Ok(Mov::TwoPush(i2))
             },
-            ParseMov::Quiet(PieceType::Knight, From::None, i2, ..) => {
+            ParseMov::Quiet(PieceType::Knight, From::None, i2, _) => {
                 Ok(Mov::Quiet(6, i2))
             },
             ParseMov::Quiet(_p, _from, _i2, _) => {
                 unimplemented!()
             },
-            ParseMov::Capture(PieceType::Pawn, _from, i2, ..) => {
-                Ok(Mov::EnPassant(36, i2))
-            },
             ParseMov::Capture(_p, From::Full(i1), i2, _) => {
                 Ok(Mov::Capture(i1, i2))
+            },
+            ParseMov::Capture(PieceType::Pawn, _from, i2, _) => {
+                Ok(Mov::EnPassant(36, i2))
             },
             ParseMov::Capture(_p, _from, _i2, _) => {
                 unimplemented!()
@@ -102,8 +102,26 @@ impl Position {
                 Color::White => board.mov(t2 - 16, t2),
                 Color::Black => board.mov(t2 + 16, t2),
             },
-            Mov::CastleKing => {},
-            Mov::CastleQueen => {},
+            Mov::CastleKing => match self.color_to_play {
+                Color::White => {
+                    board.mov(4, 6);
+                    board.mov(7, 5);
+                }, 
+                Color::Black => {
+                    board.mov(60, 62);
+                    board.mov(63, 61);
+                },
+            },
+            Mov::CastleQueen => match self.color_to_play {
+                Color::White => {
+                    board.mov(4, 2);
+                    board.mov(0, 3);
+                }, 
+                Color::Black => {
+                    board.mov(60, 58);
+                    board.mov(56, 59);
+                },
+            },
             Mov::EnPassant(t1, t2) => {
                 board.mov(t1, t2);
                 match self.color_to_play {
@@ -114,7 +132,11 @@ impl Position {
             Mov::Promotion(t1, t2, ref p) | Mov::PromotionCapture(t1, t2, ref p) => board.prom(t1, t2, Piece::new(self.color_to_play, p.to_piece_type())),
         };
         let half_move_clock = match *m {
-            Mov::Quiet(_,_) | Mov::CastleKing | Mov::CastleQueen => self.half_move_clock + 1,
+            Mov::CastleKing | Mov::CastleQueen => self.half_move_clock + 1,
+            Mov::Quiet(_, i2) => match board.tile_at(i2) {
+                Tile::Occupied(p) if p.is_pawn() => 0,
+                _ => self.half_move_clock + 1,
+            },
             _ => 0,
         };
         let en_passant = match *m {

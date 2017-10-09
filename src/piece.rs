@@ -83,4 +83,11 @@ impl Piece {
             PieceType::Knight => "N",
         }
     }
+
+    pub fn is_pawn(&self) -> bool {
+        match self.piece {
+            PieceType::Pawn => true,
+            _ => false,
+        }
+    }
 }
