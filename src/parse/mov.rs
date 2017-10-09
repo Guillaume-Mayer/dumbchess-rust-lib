@@ -78,44 +78,32 @@ fn parse_move(p: PieceType, c: Option<char>, mut it: Chars) -> Result<Mov, Error
             Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, Promotion::None, Indicator::None))
         },
         (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), Some('x')) => {
-            let from = From::Full(parse_tile(Some(f), Some(r))?);
             let to = parse_tile(it.next(), it.next())?;
             let mut c = it.next();
-            let prom = parse_promotion(p, &mut c, it)?;
-            Ok(Mov::Capture(p, from, to, prom, parse_end(c)?))
+            Ok(Mov::Capture(p, From::Full(parse_tile(Some(f), Some(r))?), to, parse_promotion(p, &mut c, it)?, parse_end(c)?))
         },
         (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), Some('-')) => {
-            let from = From::Full(parse_tile(Some(f), Some(r))?);
             let to = parse_tile(it.next(), it.next())?;
             let mut c = it.next();
-            let prom = parse_promotion(p, &mut c, it)?;
-            Ok(Mov::Quiet(p, from, to, prom, parse_end(c)?))
+            Ok(Mov::Quiet(p, From::Full(parse_tile(Some(f), Some(r))?), to, parse_promotion(p, &mut c, it)?, parse_end(c)?))
         },
         (Some(f @ 'a'...'h'), Some(r @ '1'...'8'), Some(c)) => {
             let mut c = Some(c);
-            let prom = parse_promotion(p, &mut c, it)?;
-            Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, prom, parse_end(c)?))
+            Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, parse_promotion(p, &mut c, it)?, parse_end(c)?))
         },
         (Some(f1 @ 'a'...'h'), Some('x'), Some(f2 @ 'a'...'h')) => {
-            let from = From::File(parse_file(f1)?);
             let to = parse_tile(Some(f2), it.next())?;
             let mut c = it.next();
-            let prom = parse_promotion(p, &mut c, it)?;
-            Ok(Mov::Capture(p, from, to, prom, parse_end(c)?))
+            Ok(Mov::Capture(p, From::File(parse_file(f1)?), to, parse_promotion(p, &mut c, it)?, parse_end(c)?))
         },
         (Some(r1 @ '1'...'8'), Some(f @ 'a'...'h'), Some(r2 @ '1'...'8')) => {
-            let from = From::Rank(parse_rank(r1)?);
-            let to = parse_tile(Some(f), Some(r2))?;
             let mut c = it.next();
-            let prom = parse_promotion(p, &mut c, it)?;
-            Ok(Mov::Quiet(p, from, to, prom, parse_end(c)?))
+            Ok(Mov::Quiet(p, From::Rank(parse_rank(r1)?), parse_tile(Some(f), Some(r2))?, parse_promotion(p, &mut c, it)?, parse_end(c)?))
         },
         (Some(r @ '1'...'8'), Some('x'), Some(f @ 'a'...'h')) => {
-            let from = From::Rank(parse_rank(r)?);
             let to = parse_tile(Some(f), it.next())?;
             let mut c = it.next();
-            let prom = parse_promotion(p, &mut c, it)?;
-            Ok(Mov::Capture(p, from, to, prom, parse_end(c)?))
+            Ok(Mov::Capture(p, From::Rank(parse_rank(r)?), to, parse_promotion(p, &mut c, it)?, parse_end(c)?))
         },
         (Some('x'), Some(f @ 'a'...'h'), Some(r @ '1'...'8')) if p != PieceType::Pawn => {
             Ok(Mov::Capture(p, From::None, parse_tile(Some(f), Some(r))?, Promotion::None, parse_end(it.next())?))
