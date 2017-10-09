@@ -6,7 +6,7 @@ pub enum Mov {
     TwoPush(usize),
     CastleKing,
     CastleQueen,
-    _Capture(usize, usize),
+    Capture(usize, usize),
     _EnPassant(usize, usize),
     _Promotion(usize, usize, PieceType),
     _PromotionCapture(usize, usize, PieceType),

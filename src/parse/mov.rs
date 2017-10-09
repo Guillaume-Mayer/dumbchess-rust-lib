@@ -37,7 +37,6 @@ pub enum Promotion {
 pub enum Error {
     EmptyMove,
     InvalidMove,
-    NotImplemented,
 }
 
 impl FromStr for Mov {
@@ -98,21 +97,21 @@ fn parse_move(p: PieceType, c: Option<char>, mut it: Chars) -> Result<Mov, Error
             Ok(Mov::Quiet(p, From::None, parse_tile(Some(f), Some(r))?, prom, parse_end(c)?))
         },
         (Some(f1 @ 'a'...'h'), Some('x'), Some(f2 @ 'a'...'h')) => {
-            let from = From::File(parse_file(f1));
+            let from = From::File(parse_file(f1)?);
             let to = parse_tile(Some(f2), it.next())?;
             let mut c = it.next();
             let prom = parse_promotion(p, &mut c, it)?;
             Ok(Mov::Capture(p, from, to, prom, parse_end(c)?))
         },
         (Some(r1 @ '1'...'8'), Some(f @ 'a'...'h'), Some(r2 @ '1'...'8')) => {
-            let from = From::Rank(parse_rank(r1));
+            let from = From::Rank(parse_rank(r1)?);
             let to = parse_tile(Some(f), Some(r2))?;
             let mut c = it.next();
             let prom = parse_promotion(p, &mut c, it)?;
             Ok(Mov::Quiet(p, from, to, prom, parse_end(c)?))
         },
         (Some(r @ '1'...'8'), Some('x'), Some(f @ 'a'...'h')) => {
-            let from = From::Rank(parse_rank(r));
+            let from = From::Rank(parse_rank(r)?);
             let to = parse_tile(Some(f), it.next())?;
             let mut c = it.next();
             let prom = parse_promotion(p, &mut c, it)?;
@@ -179,17 +178,17 @@ fn parse_promotion(p: PieceType, c: &mut Option<char>, mut it: Chars) -> Result<
     }
 }
 
-fn parse_file(f: char) -> usize {
-    "abcdefgh".find(f).unwrap()
+fn parse_file(f: char) -> Result<usize, Error> {
+    "abcdefgh".find(f).ok_or(Error::InvalidMove)
 }
 
-fn parse_rank(r: char) -> usize {
-    "12345678".find(r).unwrap()
+fn parse_rank(r: char) -> Result<usize, Error> {
+    "12345678".find(r).ok_or(Error::InvalidMove)
 }
 
 fn parse_tile(f: Option<char>, r: Option<char>) -> Result<usize, Error> {
     match (f, r) {
-        (Some(f), Some(r)) => Ok(parse_file(f) + parse_rank(r) * 8),
+        (Some(f), Some(r)) => Ok(parse_file(f)? + parse_rank(r)? * 8),
         _ => Err(Error::InvalidMove),
     }
 }

@@ -72,4 +72,11 @@ impl Piece {
             },
         }
     }
+
+    pub fn to_san(&self) -> String {
+        match self.piece {
+            PieceType::Pawn => String::default(),
+            p => p.to_fen().to_string(),
+        }
+    }
 }

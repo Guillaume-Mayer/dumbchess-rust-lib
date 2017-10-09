@@ -1,4 +1,4 @@
-//mod play;
+mod play;
 mod parse;
 
 use game::Game;

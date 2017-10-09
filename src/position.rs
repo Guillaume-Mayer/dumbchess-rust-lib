@@ -1,16 +1,23 @@
 use board::Board;
 use color::Color;
 use mov::Mov;
-use parse::mov::Mov as ParsedMov;
-use parse::mov::Error;
+use parse::mov::Mov as ParseMov;
+use parse::mov::Error as ParseError;
+use parse::mov::{From};
 use tile::Tile;
-use piece::{Piece, PieceType};
+use piece::*;
 
 pub struct Position {
     board: Board,
     color_to_play: Color,
     half_move_clock: u16,
     en_passant: Option<usize>,
+}
+
+#[derive(Debug)]
+pub enum MoveError {
+    ParseMoveError(ParseError),
+    _IllegalMove,
 }
 
 impl Position {
@@ -32,17 +39,27 @@ impl Position {
         self.board.to_str()
     }
 
-    pub fn move_from_str(&self, s: &str) -> Result<Mov, Error> {
-        let m: ParsedMov = s.parse()?;
+    pub fn move_from_str(&self, s: &str) -> Result<Mov, MoveError> {
+        let m = match s.parse() {
+            Ok(m) => m,
+            Err(e) => return Err(MoveError::ParseMoveError(e)),
+        };
         match m {
-            ParsedMov::CastleKing(_) => Ok(Mov::CastleKing),
-            ParsedMov::CastleQueen(_) => Ok(Mov::CastleQueen),
-            ParsedMov::Quiet(p, _, i2, ..) => match p {
-                PieceType::Pawn => Ok(Mov::TwoPush(i2)),
-                PieceType::Knight => Ok(Mov::Quiet(6, i2)),
-                _ => Err(Error::NotImplemented)
+            ParseMov::CastleKing(_) => Ok(Mov::CastleKing),
+            ParseMov::CastleQueen(_) => Ok(Mov::CastleQueen),
+            ParseMov::Quiet(_piece, From::Full(i1), i2, ..) => {
+                Ok(Mov::Quiet(i1, i2))
             },
-            ParsedMov::Capture(..) => Err(Error::NotImplemented),
+            ParseMov::Capture(_piece, From::Full(i1), i2, ..) => {
+                Ok(Mov::Capture(i1, i2))
+            },
+            ParseMov::Quiet(PieceType::Pawn, From::None, i2, ..) => {
+                Ok(Mov::TwoPush(i2))
+            },
+            ParseMov::Quiet(PieceType::Knight, From::None, i2, ..) => {
+                Ok(Mov::Quiet(6, i2))
+            },
+            _ => unimplemented!(),
         }
     }
 
@@ -60,7 +77,7 @@ impl Position {
     pub fn play(&self, m: &Mov) -> Position {
         let mut board = self.board.clone();
         match *m {
-            Mov::Quiet(t1, t2) | Mov::_Capture(t1, t2) => board.mov(t1, t2),
+            Mov::Quiet(t1, t2) | Mov::Capture(t1, t2) => board.mov(t1, t2),
             Mov::TwoPush(t2) => match self.color_to_play {
                 Color::White => board.mov(t2 - 16, t2),
                 Color::Black => board.mov(t2 + 16, t2),
@@ -102,9 +119,9 @@ impl Position {
             Mov::CastleQueen => String::from("O-O-O"),
             Mov::Quiet(i1, i2) => match self.board.tile_at(i1) {
                 Tile::Empty => panic!("Empty tile"),
-                Tile::Occupied(p) => format!("{}{}", p.to_fen(), Self::index_to_str(i2)),
+                Tile::Occupied(p) => format!("{}{}", p.to_san(), Self::index_to_str(i2)),
             },
-            Mov::_Capture(i1, i2) | Mov::_EnPassant(i1, i2) => match self.board.tile_at(i1) {
+            Mov::Capture(i1, i2) | Mov::_EnPassant(i1, i2) => match self.board.tile_at(i1) {
                 Tile::Empty => panic!("Empty tile"),
                 Tile::Occupied(p) => format!("{}x{}", p.to_fen(), Self::index_to_str(i2)),
             },

@@ -16,7 +16,8 @@ fn play_e4_c5_fen() {
 }
 
 #[test]
-fn play_e4_c5_nf3_fen() {
+#[allow(non_snake_case)]
+fn play_e4_c5_Nf3_fen() {
     let mut g = Game::new();
     g.play("e4");
     g.play("c5");
@@ -25,7 +26,8 @@ fn play_e4_c5_nf3_fen() {
 }
 
 #[test]
-fn play_e4_c5_nf3_pgn() {
+#[allow(non_snake_case)]
+fn play_e4_c5_Nf3_pgn() {
     let mut g = Game::new();
     g.play("e4");
     g.play("c5");
