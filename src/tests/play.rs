@@ -48,3 +48,33 @@ fn play_e2_e3_fen() {
     g.play("e2-e3");
     assert_eq!("rnbqkbnr/pppppppp/8/8/8/4P3/PPPP1PPP/RNBQKBNR b KQkq - 0 1", g.to_fen());
 }
+
+#[test]
+fn play_en_passant_fen() {
+    let mut g = Game::new();
+    g.play("e4");
+    g.play("Nb8-c6");
+    g.play("e4-e5");
+    g.play("d5");
+    g.play("e5xd6");
+    println!("{}", g.to_pgn());
+    assert_eq!("r1bqkbnr/ppp1pppp/2nP4/8/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 3", g.to_fen());
+}
+
+#[test]
+fn play_en_passant_pgn() {
+    let mut g = Game::new();
+    g.play("e4");
+    g.play("Nb8-c6");
+    g.play("e4-e5");
+    g.play("d5");
+    g.play("e5xd6");
+    assert_eq!("[Event \"?\"]\n\
+                [Site \"?\"]\n\
+                [Date \"????.??.??\"]\n\
+                [Round \"?\"]\n\
+                [White \"You\"]\n\
+                [Black \"Me\"]\n\
+                [Result \"*\"]\n\n\
+                1.e4 Nc6 2.e5 d5 3.exd6 ", g.to_pgn());
+}

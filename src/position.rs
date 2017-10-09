@@ -59,6 +59,9 @@ impl Position {
             ParseMov::Quiet(_p, _from, _i2, _) => {
                 unimplemented!()
             },
+            ParseMov::Capture(PieceType::Pawn, From::Full(i1), i2, _) => {
+                Ok(Mov::EnPassant(i1, i2))
+            },
             ParseMov::Capture(_p, From::Full(i1), i2, _) => {
                 Ok(Mov::Capture(i1, i2))
             },
@@ -91,7 +94,11 @@ impl Position {
     }
 
     fn index_to_str(index: usize) -> String {
-        format!("{}{}", "abcdefgh".chars().nth(index % 8).unwrap(), index / 8 + 1)
+        format!("{}{}", Self::index_to_file(index), index / 8 + 1)
+    }
+    
+    fn index_to_file(index: usize) -> char {
+        "abcdefgh".chars().nth(index % 8).unwrap()
     }
 
     pub fn play(&self, m: &Mov) -> Position {
@@ -163,9 +170,13 @@ impl Position {
                 Tile::Empty => panic!("Empty tile"),
                 Tile::Occupied(p) => format!("{}{}", p.to_san(), Self::index_to_str(i2)),
             },
-            Mov::Capture(i1, i2) | Mov::EnPassant(i1, i2) => match self.board.tile_at(i1) {
+            Mov::Capture(i1, i2) => match self.board.tile_at(i1) {
                 Tile::Empty => panic!("Empty tile"),
                 Tile::Occupied(p) => format!("{}x{}", p.to_san(), Self::index_to_str(i2)),
+            },
+            Mov::EnPassant(i1, i2) => match self.board.tile_at(i1) {
+                Tile::Empty => panic!("Empty tile"),
+                _ => format!("{}x{}", Self::index_to_file(i1), Self::index_to_str(i2)),
             },
             Mov::Promotion(i1, i2, ref pr) => match self.board.tile_at(i1) {
                 Tile::Empty => panic!("Empty tile"),
