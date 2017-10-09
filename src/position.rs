@@ -190,8 +190,9 @@ impl Position {
     }
 
     pub fn moves(&self) -> Vec<Mov> {
-        let moves = Vec::new();
-        self.board.pieces(self.color_to_play);
-        moves
+        self.board.pieces(self.color_to_play)
+            .filter(|i| i.piece == PieceType::Pawn)
+            .map(|p| Mov::TwoPush(p.index + 16))
+            .collect()
     }
 }
