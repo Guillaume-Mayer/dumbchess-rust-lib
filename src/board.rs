@@ -109,7 +109,7 @@ impl fmt::Debug for Board {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for r in 0..8 {
             let i = r * 8;
-            write!(f, "{:?}{:?}{:?}{:?}{:?}{:?}{:?}{:?}", self.tiles[i], self.tiles[i + 1], self.tiles[i + 2], self.tiles[i + 3], self.tiles[i + 4], self.tiles[i + 5], self.tiles[i + 6], self.tiles[i + 7])?;
+            write!(f, "\n[{:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}, {:?}]\n", self.tiles[i], self.tiles[i + 1], self.tiles[i + 2], self.tiles[i + 3], self.tiles[i + 4], self.tiles[i + 5], self.tiles[i + 6], self.tiles[i + 7])?;
         }
         Ok(())
     }
