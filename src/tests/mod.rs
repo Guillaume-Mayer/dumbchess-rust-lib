@@ -63,3 +63,21 @@ fn blacks() {
         _ => assert!(false, "blacks last"),
     };
 }
+
+#[test]
+fn size_of() {
+    use std::mem;
+    use color::Color;
+    use piece::Piece;
+    use mov::Mov;
+    use tile::Tile;
+    use position::Position;
+    println!("PieceType: {}", mem::size_of::<PieceType>());
+    println!("Color: {}", mem::size_of::<Color>());
+    println!("Piece: {}", mem::size_of::<Piece>());
+    println!("Mov: {}", mem::size_of::<Mov>());
+    println!("Tile: {}", mem::size_of::<Tile>());
+    println!("Board: {}", mem::size_of::<Board>());
+    println!("Position: {}", mem::size_of::<Position>());
+    println!("Game: {}", mem::size_of::<Game>());
+}

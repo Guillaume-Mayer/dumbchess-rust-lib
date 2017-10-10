@@ -100,3 +100,7 @@ impl Piece {
     }
 
 }
+
+trait MyPiece {
+    fn to_fen(&self) -> char;
+}
