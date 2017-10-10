@@ -1,6 +1,6 @@
 use piece::Piece;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum Tile {
     Empty,
     Occupied(Piece),

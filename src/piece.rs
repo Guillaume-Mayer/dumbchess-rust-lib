@@ -23,7 +23,7 @@ impl PieceType {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Piece {
     color: Color,
     piece: PieceType,

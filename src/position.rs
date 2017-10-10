@@ -8,6 +8,7 @@ use parse::mov::{From};
 use tile::Tile;
 use piece::{Piece, PieceType};
 
+#[derive(Debug)]
 pub struct Position {
     board: Board,
     color_to_play: Color,
@@ -97,7 +98,7 @@ impl Position {
     fn index_to_str(index: usize) -> String {
         format!("{}{}", Self::index_to_file(index), index / 8 + 1)
     }
-    
+
     fn index_to_file(index: usize) -> char {
         "abcdefgh".chars().nth(index % 8).unwrap()
     }
@@ -114,7 +115,7 @@ impl Position {
                 Color::White => {
                     board.mov(4, 6);
                     board.mov(7, 5);
-                }, 
+                },
                 Color::Black => {
                     board.mov(60, 62);
                     board.mov(63, 61);
@@ -124,7 +125,7 @@ impl Position {
                 Color::White => {
                     board.mov(4, 2);
                     board.mov(0, 3);
-                }, 
+                },
                 Color::Black => {
                     board.mov(60, 58);
                     board.mov(56, 59);

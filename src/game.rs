@@ -2,6 +2,7 @@ use mov::Mov;
 use position::Position;
 use std::fmt;
 
+#[derive(Debug)]
 enum Result {
     _Draw,
     _WhiteWins,
@@ -18,6 +19,7 @@ impl fmt::Display for Result {
     }
 }
 
+#[derive(Debug)]
 struct Info {
     event: String,
     site: String,
@@ -55,6 +57,7 @@ impl Info {
     }
 }
 
+#[derive(Debug)]
 pub struct Game {
     info: Info,
     history: Vec<Mov>,
