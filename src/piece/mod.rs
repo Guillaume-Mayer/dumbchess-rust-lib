@@ -113,5 +113,8 @@ pub trait _Piece {
     fn to_fen(&self) -> char;
     fn to_san(&self) -> &str;
     fn color(&self) -> Color;
+    fn is_pawn(&self) -> bool {
+        false
+    }
 }
 

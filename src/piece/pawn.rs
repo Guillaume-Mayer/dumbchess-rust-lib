@@ -30,4 +30,7 @@ impl _Piece for Pawn {
     fn color(&self) -> Color {
         self.color
     }
+    fn is_pawn(&self) -> bool {
+        true
+    }
 }
