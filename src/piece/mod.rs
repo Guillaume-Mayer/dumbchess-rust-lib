@@ -5,6 +5,13 @@ mod bishop;
 mod knight;
 mod pawn;
 
+pub use self::king::King;
+pub use self::queen::Queen;
+pub use self::rook::Rook;
+pub use self::bishop::Bishop;
+pub use self::knight::Knight;
+pub use self::pawn::Pawn;
+
 use color::Color;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -109,6 +116,7 @@ impl Piece {
 }
 
 pub trait _Piece {
+    fn new(color: Color) -> Self;
     fn to_char(&self) -> char;
     fn to_fen(&self) -> char;
     fn to_san(&self) -> &str;
@@ -117,4 +125,3 @@ pub trait _Piece {
         false
     }
 }
-

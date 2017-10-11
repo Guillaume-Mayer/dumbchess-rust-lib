@@ -5,13 +5,10 @@ pub struct Pawn {
     color: Color,
 }
 
-impl Pawn {
-    pub fn new(color: Color) -> Pawn {
+impl _Piece for Pawn {
+    fn new(color: Color) -> Pawn {
         Pawn { color }
     }
-}
-
-impl _Piece for Pawn {
     fn to_char(&self) -> char {
         match self.color {
             Color::White => '♙',

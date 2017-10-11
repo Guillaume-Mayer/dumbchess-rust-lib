@@ -3,8 +3,8 @@ mod parse;
 
 use game::Game;
 use board::{Board, Item};
-use piece::PieceType;
 use color::Color;
+use piece::*;
 
 #[test]
 fn init_fen() {
@@ -68,7 +68,6 @@ fn blacks() {
 fn size_of() {
     use std::mem::size_of;
     use color::Color;
-    use piece::Piece;
     use tile::Tile;
     use mov::Mov;
     use parse::mov::Mov as ParsedMov;
@@ -82,4 +81,12 @@ fn size_of() {
     assert_eq!(192, size_of::<Board>());
     assert_eq!(216, size_of::<Position>());
     assert_eq!(344, size_of::<Game>());
+}
+
+#[test]
+fn newboard() {
+    let k = King::new(Color::White);
+    let p = Pawn::new(Color::Black);
+    assert_eq!('K', k.to_fen());
+    assert_eq!('p', p.to_fen());
 }

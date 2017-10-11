@@ -5,13 +5,10 @@ pub struct Knight {
     color: Color,
 }
 
-impl Knight {
-    pub fn new(color: Color) -> Knight {
+impl _Piece for Knight {
+    fn new(color: Color) -> Knight {
         Knight { color }
     }
-}
-
-impl _Piece for Knight {
     fn to_char(&self) -> char {
         match self.color {
             Color::White => '♘',
