@@ -2,13 +2,16 @@ use color::Color;
 use piece::_Piece;
 
 pub struct King {
-    color: Color,
+    pub color: Color,
+}
+
+impl King {
+    pub fn new(color: Color) -> King {
+        King { color }
+    }
 }
 
 impl _Piece for King {
-    fn new(color: Color) -> King {
-        King { color }
-    }
 
     fn to_char(&self) -> char {
         match self.color {

@@ -6,9 +6,9 @@ pub struct Knight {
 }
 
 impl _Piece for Knight {
-    fn new(color: Color) -> Knight {
+    /*fn new(color: Color) -> Knight {
         Knight { color }
-    }
+    }*/
     fn to_char(&self) -> char {
         match self.color {
             Color::White => '♘',

@@ -6,9 +6,9 @@ pub struct Rook {
 }
 
 impl _Piece for Rook {
-    fn new(color: Color) -> Rook {
+    /*fn new(color: Color) -> Rook {
         Rook { color }
-    }
+    }*/
     fn to_char(&self) -> char {
         match self.color {
             Color::White => '♖',

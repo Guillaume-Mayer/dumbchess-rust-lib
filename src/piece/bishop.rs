@@ -6,9 +6,9 @@ pub struct Bishop {
 }
 
 impl _Piece for Bishop {
-    fn new(color: Color) -> Bishop {
+    /*fn new(color: Color) -> Bishop {
         Bishop { color }
-    }
+    }*/
     fn to_char(&self) -> char {
         match self.color {
             Color::White => '♗',

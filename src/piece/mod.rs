@@ -116,12 +116,51 @@ impl Piece {
 }
 
 pub trait _Piece {
-    fn new(color: Color) -> Self;
     fn to_char(&self) -> char;
     fn to_fen(&self) -> char;
     fn to_san(&self) -> &str;
     fn color(&self) -> Color;
     fn is_pawn(&self) -> bool {
         false
+    }
+}
+
+enum Tile {
+    Empty,
+    Occupied(Box<_Piece>),
+}
+
+impl Clone for Tile {
+    fn clone(&self) -> Tile {
+        match *self {
+            Tile::Empty => Tile::Empty,
+            Tile::Occupied(ref p) => Tile::Occupied(Box::new(p.clone() as _Piece)),
+        }
+    }
+}
+
+struct Board {
+    tiles: [Tile; 3],
+}
+
+impl Board {
+    pub fn new() -> Board {
+        Board {
+            tiles: [
+                Tile::Empty,
+                Tile::Occupied(Box::new(King::new(Color::White))),
+                Tile::Occupied(Box::new(Queen::new(Color::Black))),
+            ]
+        }
+    }
+}
+
+impl Clone for Board {
+    fn clone(&self) -> Board {
+        Board { tiles: [
+            self.tiles[0].clone(),
+            self.tiles[1].clone(),
+            self.tiles[2].clone(),
+        ] }
     }
 }

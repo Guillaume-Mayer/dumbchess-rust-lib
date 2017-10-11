@@ -6,9 +6,9 @@ pub struct Pawn {
 }
 
 impl _Piece for Pawn {
-    fn new(color: Color) -> Pawn {
+    /*fn new(color: Color) -> Pawn {
         Pawn { color }
-    }
+    }*/
     fn to_char(&self) -> char {
         match self.color {
             Color::White => '♙',
