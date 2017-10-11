@@ -66,18 +66,20 @@ fn blacks() {
 
 #[test]
 fn size_of() {
-    use std::mem;
+    use std::mem::size_of;
     use color::Color;
     use piece::Piece;
-    use mov::Mov;
     use tile::Tile;
+    use mov::Mov;
+    use parse::mov::Mov as ParsedMov;
     use position::Position;
-    assert_eq!(1, mem::size_of::<PieceType>());
-    assert_eq!(1, mem::size_of::<Color>());
-    assert_eq!(2, mem::size_of::<Piece>());
-    assert_eq!(24, mem::size_of::<Mov>());
-    assert_eq!(3, mem::size_of::<Tile>());
-    assert_eq!(192, mem::size_of::<Board>());
-    assert_eq!(216, mem::size_of::<Position>());
-    assert_eq!(392, mem::size_of::<Game>());
+    assert_eq!(1, size_of::<PieceType>());
+    assert_eq!(1, size_of::<Color>());
+    assert_eq!(2, size_of::<Piece>());
+    assert_eq!(3, size_of::<Tile>());
+    assert_eq!(24, size_of::<Mov>());
+    assert_eq!(32, size_of::<ParsedMov>());
+    assert_eq!(192, size_of::<Board>());
+    assert_eq!(216, size_of::<Position>());
+    assert_eq!(344, size_of::<Game>());
 }

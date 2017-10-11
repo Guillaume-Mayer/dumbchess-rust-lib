@@ -21,24 +21,24 @@ impl fmt::Display for Result {
 
 #[derive(Debug)]
 struct Info {
-    event: String,
-    site: String,
-    date: String,
-    round: String,
-    white: String,
-    black: String,
+    event: &'static str,
+    site: &'static str,
+    date: &'static str,
+    round: &'static str,
+    white: &'static str,
+    black: &'static str,
     result: Option<Result>,
 }
 
 impl Info {
     fn new() -> Info {
         Info {
-            event: String::from("?"),
-            site: String::from("?"),
-            date: String::from("????.??.??"),
-            round: String::from("?"),
-            white: String::from("You"),
-            black: String::from("Me"),
+            event: "?",
+            site: "?",
+            date: "????.??.??",
+            round: "?",
+            white: "You",
+            black: "Me",
             result: None,
         }
     }
