@@ -1,3 +1,10 @@
+mod king;
+mod queen;
+mod rook;
+mod bishop;
+mod knight;
+mod pawn;
+
 use color::Color;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
@@ -101,6 +108,10 @@ impl Piece {
 
 }
 
-trait MyPiece {
+pub trait _Piece {
+    fn to_char(&self) -> char;
     fn to_fen(&self) -> char;
+    fn to_san(&self) -> &str;
+    fn color(&self) -> Color;
 }
+
